@@ -414,16 +414,27 @@
     }
 
     function renderCards(pinkoDexList) {
-      groupElement.innerHTML = pinkoDexList.map(id => `
-        <div class="card-main">
-          <img
-            class="card pinkoId-${id} rotation-left"
-            draggable="false"
-            src="pinko-${id}.png"
-            decoding="sync"
-          >
-        </div>
-      `).join('');
+      const savedSlots = JSON.parse(localStorage.getItem('pinkoSlots') || '[]');
+      const placedIds  = new Set(
+        savedSlots
+          .filter(s => s && s.pinkoId)
+          .map(s => s.pinkoId)
+      );
+
+      groupElement.innerHTML = pinkoDexList.map(id => {
+        const pinkoIdClass = `pinkoId-${id}`;
+        const isHidden     = placedIds.has(pinkoIdClass) ? ' hidden' : '';
+        return `
+          <div class="card-main${isHidden}">
+            <img
+              class="card ${pinkoIdClass} rotation-left"
+              draggable="false"
+              src="pinko-${id}.png"
+              decoding="sync"
+            >
+          </div>
+        `;
+      }).join('');
     }
 
     function cloneGroup() {
