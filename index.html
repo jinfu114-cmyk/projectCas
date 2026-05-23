@@ -393,7 +393,8 @@
     ───────────────────────────── */
 
     function initCarousel() {
-      const pinkoDexList = generatePinkoDex(10);
+      const saved = localStorage.getItem('pinkoDex');
+      const pinkoDexList = saved ? JSON.parse(saved) : generatePinkoDex(10);
       renderCards(pinkoDexList);
       cloneGroup();
     }
@@ -408,6 +409,7 @@
           list.push(random);
         }
       }
+      localStorage.setItem('pinkoDex', JSON.stringify(list));
       return list;
     }
 
@@ -754,7 +756,10 @@
 
     function scheduleReload() {
       const msUntilNextMinute = 60000 - (Date.now() % 60000);
-      setTimeout(() => location.reload(), msUntilNextMinute);
+      setTimeout(() => {
+        localStorage.removeItem('pinkoDex');
+        location.reload();
+      }, msUntilNextMinute);
     }
 
   </script>
