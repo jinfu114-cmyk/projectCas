@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="user-scalable=no">
+  <title>Welcome to Castell World</title>
+
+  <style>
+
+    /* ─────────────────────────────
+       GLOBAL RESET / SELECTION
+    ───────────────────────────── */
+
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+
+    img {
+      -webkit-user-drag: none;
+    }
+
+
+    /* ─────────────────────────────
+       BASE / LAYOUT
+    ───────────────────────────── */
+
+    body {
+      background-image: url('castellbg1.png');
+      background-position: center;
+      background-size: 300px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+
+    /* ─────────────────────────────
+       HEADER / LOGO
+    ───────────────────────────── */
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .logo {
+      width: 730px;
+      max-width: 780px;
+      padding: 120px 0 21px;
+      display: block;
+      z-index: 20;
+    }
+
+    .logo,
+    .castell-border-image,
+    .castell-shirt-container-image {
+      image-rendering: auto;
+    }
+
+
+    /* ─────────────────────────────
+       BORDER
+    ───────────────────────────── */
+
+    .castell-border {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      margin-top: -380px;
+    }
+
+    .castell-border-image {
+      width: 900px;
+      height: auto;
+    }
+
+
+    /* ─────────────────────────────
+       CAROUSEL
+    ───────────────────────────── */
+
+    .carousel,
+    .card {
+      touch-action: none;
+    }
+
+    .carousel {
+      margin: 8px auto;
+      width: 801px;
+      border: 20px solid transparent;
+      position: relative;
+      z-index: 5;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .group {
+      display: flex;
+      gap: 1px;
+      padding: 0 1px 8.5px 0;
+      animation: scroll 16s linear infinite;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    .card-main {
+      overflow: hidden;
+      border-radius: 0.2em;
+    }
+
+    .card {
+      width: 230px;
+      height: 230px;
+      object-fit: contain;
+      border-radius: 0.2em;
+      cursor: grab;
+      padding: 5px;
+      user-select: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      display: block;
+      backface-visibility: hidden;
+    }
+
+    .card:hover {
+      filter:
+        drop-shadow(0 0 2px #fff)
+        drop-shadow(0 0 6px #fff);
+    }
+
+
+    /* ─────────────────────────────
+       SHIRT AREA
+    ───────────────────────────── */
+
+    .shirt-container {
+      margin: 100px auto;
+      width: 600px;
+      height: 600px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .pinko-item {
+      position: absolute;
+      cursor: grab;
+    }
+
+    .pinko-item img {
+      width: 125%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      transform-origin: bottom center;
+    }
+
+    .pinko-item:hover img {
+      filter:
+        drop-shadow(0 0 1px #ffffff)
+        drop-shadow(0 0 3px #ffffff);
+    }
+
+
+    /* ─────────────────────────────
+       SLOT AREAS
+    ───────────────────────────── */
+
+    .shirt-pinko-placement-width,
+    .shirt-pinko-placement-width1,
+    .shirt-pinko-placement-width2 {
+      width: 100px;
+      height: 130px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .shirt-pinko-placement-width  { left: 172px; top: 200px; z-index: 1000; }
+    .shirt-pinko-placement-width1 { left: 236px; top: 168px; z-index: 800;  }
+    .shirt-pinko-placement-width2 { left: 300px; top: 136px; z-index: 600;  }
+
+
+    /* ─────────────────────────────
+       SHIRT CONTAINER
+    ───────────────────────────── */
+
+    .castell-shirt-container {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      margin-top: -861px;
+      transform: translateY(0px);
+    }
+
+    .castell-shirt-container-image {
+      width: 810px;
+      height: auto;
+    }
+
+    .castell-shirt {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      pointer-events: none;
+    }
+
+
+    /* ─────────────────────────────
+       UTILITIES
+    ───────────────────────────── */
+
+    .hidden       { visibility: hidden; }
+    .rotation-left { transform: scaleX(-1); }
+
+
+    /* ─────────────────────────────
+       SCROLL ANIMATION
+    ───────────────────────────── */
+
+    @keyframes scroll {
+      from { transform: translateX(0);    }
+      to   { transform: translateX(-100%); }
+    }
+
+
+    /* ─────────────────────────────
+       DOMINO PULSE  (10s cooldown)
+    ───────────────────────────── */
+
+    .domino-0 img,
+    .domino-1 img,
+    .domino-2 img {
+      animation: dominoPulse 13s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      animation-delay: 0.12s;
+    }
+
+    @keyframes dominoPulse {
+      0%   { transform: scale(1);    }
+      2%   { transform: scale(1.12); }
+      4%   { transform: scale(1);    }
+      100% { transform: scale(1);    }
+    }
+
+
+    /* ─────────────────────────────
+       DRAGGING CURSOR STATE
+    ───────────────────────────── */
+
+    body.is-dragging,
+    body.is-dragging * {
+      cursor: none !important;
+    }
+
+
+    /* ─────────────────────────────
+       TIMER
+    ───────────────────────────── */
+
+    .timer-wrap {
+      position: absolute;
+      top: 389px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .timer-boxes {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .timer-display {
+      display: flex;
+      gap: 4px;
+    }
+
+    .pixel-digit {
+      image-rendering: pixelated;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ─────────────────────────────
+       HEADER
+  ───────────────────────────── -->
+  <div class="logo-container">
+    <img class="logo" draggable="false" src="castelllogomain.png">
+  </div>
+
+  <!-- ─────────────────────────────
+       CAROUSEL
+  ───────────────────────────── -->
+  <div class="carousel">
+    <div class="group"></div>
+  </div>
+
+  <!-- ─────────────────────────────
+       BORDER  +  TIMER
+  ───────────────────────────── -->
+  <div class="castell-border">
+    <img class="castell-border-image" src="castellborder.png">
+
+    <div class="timer-wrap">
+      <div class="timer-boxes">
+        <div class="timer-display" id="t-min"></div>
+        <div class="timer-display" id="t-sec"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────
+       SHIRT AREA
+  ───────────────────────────── -->
+  <div class="shirt-container">
+    <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
+    <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
+    <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
+  </div>
+
+  <!-- ─────────────────────────────
+       SHIRT CONTAINER
+  ───────────────────────────── -->
+  <div class="castell-shirt-container">
+    <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
+    <img class="castell-shirt" src="shirt-image.png">
+  </div>
+
+
+  <script>
+
+    /* ─────────────────────────────
+       INIT
+    ───────────────────────────── */
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      initCarousel();
+      restoreSlots();
+      initDragAndDrop();
+      scheduleReload();
+    }
+
+
+    /* ─────────────────────────────
+       GLOBAL STATE
+    ───────────────────────────── */
+
+    let isDragging = false;
+    let dragImg    = null;
+
+    const groupElement = document.querySelector('.group');
+
+    const pinkoSlots = [
+      document.querySelector('.shirt-pinko-placement'),
+      document.querySelector('.shirt-pinko-placement1'),
+      document.querySelector('.shirt-pinko-placement2'),
+    ];
+
+
+    /* ─────────────────────────────
+       CAROUSEL
+    ───────────────────────────── */
+
+    function initCarousel() {
+      const pinkoDexList = generatePinkoDex(10);
+      renderCards(pinkoDexList);
+      cloneGroup();
+    }
+
+    function generatePinkoDex(amount) {
+      const list = [];
+      const used = new Set();
+      while (list.length < amount) {
+        const random = Math.floor(Math.random() * 10) + 1;
+        if (!used.has(random)) {
+          used.add(random);
+          list.push(random);
+        }
+      }
+      return list;
+    }
+
+    function renderCards(pinkoDexList) {
+      groupElement.innerHTML = pinkoDexList.map(id => `
+        <div class="card-main">
+          <img
+            class="card pinkoId-${id} rotation-left"
+            draggable="false"
+            src="pinko-${id}.png"
+            decoding="sync"
+          >
+        </div>
+      `).join('');
+    }
+
+    function cloneGroup() {
+      const clonedGroup = groupElement.cloneNode(true);
+      document.querySelector('.carousel').appendChild(clonedGroup);
+    }
+
+
+    /* ─────────────────────────────
+       DRAG & DROP
+    ───────────────────────────── */
+
+    function initDragAndDrop() {
+      document.addEventListener('pointerdown', handleMouseDown, { passive: false });
+      document.addEventListener('pointermove', handleMouseMove, { passive: false });
+      document.addEventListener('pointerup',   handleMouseUp,   { passive: false });
+    }
+
+    function handleMouseDown(event) {
+      event.preventDefault();
+      if (isDragging) return;
+
+      const card = event.target;
+      if (!card.classList.contains('card')) return;
+
+      isDragging = true;
+      document.body.classList.add('is-dragging');
+
+      const parentCard = card.parentNode;
+      const index = Array.from(parentCard.parentNode.children).indexOf(parentCard);
+
+      dragImg = card.cloneNode(true);
+      dragImg.dataset.sourceIndex = index;
+
+      toggleCardVisibility(index, true);
+      document.body.appendChild(dragImg);
+
+      Object.assign(dragImg.style, {
+        position:        'absolute',
+        pointerEvents:   'none',
+        zIndex:          '1000',
+        imageRendering:  'auto',
+      });
+
+      moveAt(event.pageX, event.pageY);
+    }
+
+    function handleMouseMove(event) {
+      event.preventDefault();
+      if (!isDragging || !dragImg) return;
+      moveAt(event.pageX, event.pageY);
+    }
+
+    function handleMouseUp(event) {
+      event.preventDefault();
+      if (!dragImg) return;
+
+      const targetSlot = getTargetSlot(event.clientX, event.clientY);
+      const index      = dragImg.dataset.sourceIndex;
+
+      if (!targetSlot) {
+        toggleCardVisibility(index, false);
+        cleanupDrag();
+        return;
+      }
+
+      placePinko(targetSlot);
+      toggleCardVisibility(index, true);
+      cleanupDrag();
+    }
+
+    function getTargetSlot(x, y) {
+      let bestSlot  = null;
+      let highestZ  = -Infinity;
+
+      pinkoSlots.forEach(slot => {
+        const rect = slot.getBoundingClientRect();
+        const z    = parseInt(window.getComputedStyle(slot).zIndex) || 0;
+        const inside =
+          x >= rect.left && x <= rect.right &&
+          y >= rect.top  && y <= rect.bottom;
+
+        if (inside && z > highestZ) {
+          highestZ = z;
+          bestSlot = slot;
+        }
+      });
+
+      return bestSlot;
+    }
+
+    function placePinko(targetSlot) {
+      const newItem = createPinkoItem(dragImg);
+      removeExistingPinko(targetSlot);
+      targetSlot.innerHTML = '';
+      targetSlot.appendChild(newItem);
+      applyDominoClass(targetSlot, newItem);
+      saveSlots();
+    }
+
+    function removeExistingPinko(targetSlot) {
+      const existingItem = targetSlot.firstChild;
+      if (!existingItem) return;
+      const oldIndex = existingItem.dataset.sourceIndex;
+      toggleCardVisibility(oldIndex, false);
+      existingItem.remove();
+    }
+
+    function applyDominoClass(slot, item) {
+      if      (slot.classList.contains('shirt-pinko-placement'))  item.classList.add('domino-0');
+      else if (slot.classList.contains('shirt-pinko-placement1')) item.classList.add('domino-1');
+      else if (slot.classList.contains('shirt-pinko-placement2')) item.classList.add('domino-2');
+    }
+
+    function createPinkoItem(sourceImg) {
+      const finalImg = sourceImg.cloneNode(true);
+
+      finalImg.style.position       = 'static';
+      finalImg.style.imageRendering = 'auto';
+      
+      finalImg.classList.remove('rotation-left');
+
+      // 🔥 same behavior everywhere
+      finalImg.draggable = false;
+      finalImg.setAttribute('draggable', 'false');
+      finalImg.decoding = 'sync';
+      // 🔥 lazy loading
+      //finalImg.loading = 'lazy';
+
+      const pinkoIdClass = Array.from(sourceImg.classList)
+        .find(c => c.startsWith('pinkoId-'));
+
+      if (pinkoIdClass) {
+        finalImg.classList.add(pinkoIdClass);
+      }
+
+      const wrapper = document.createElement('div');
+
+      wrapper.className           = 'pinko-item';
+      wrapper.dataset.sourceIndex = sourceImg.dataset.sourceIndex;
+
+      wrapper.appendChild(finalImg);
+
+      wrapper.addEventListener('pointerdown', handlePinkoItemClick);
+
+      return wrapper;
+    }
+
+    function handlePinkoItemClick(event) {
+      event.stopPropagation();
+      const item  = event.currentTarget;
+      const index = item.dataset.sourceIndex;
+      item.remove();
+      toggleCardVisibility(index, false);
+      saveSlots();
+    }
+
+
+    /* ─────────────────────────────
+       HELPERS
+    ───────────────────────────── */
+
+    function moveAt(x, y) {
+      dragImg.style.left = x - dragImg.offsetWidth  / 2 + 'px';
+      dragImg.style.top  = y - dragImg.offsetHeight / 2 + 'px';
+    }
+
+    function toggleCardVisibility(index, hide) {
+      document.querySelectorAll('.group').forEach(group => {
+        const card = group.children[index];
+        if (!card) return;
+        card.classList.toggle('hidden', hide);
+      });
+    }
+
+    function cleanupDrag() {
+      dragImg.remove();
+      dragImg    = null;
+      isDragging = false;
+      document.body.classList.remove('is-dragging');
+    }
+
+
+    /* ─────────────────────────────
+       PERSISTENCE
+    ───────────────────────────── */
+
+    function saveSlots() {
+      const data = pinkoSlots.map(slot => {
+        const item = slot.firstChild;
+        if (!item) return null;
+
+        const img = item.querySelector('img');
+
+        return {
+          src:         img ? img.src : null,
+          sourceIndex: item.dataset.sourceIndex || null,
+          pinkoId:     Array.from(img.classList).find(c => c.startsWith('pinkoId-')) || null,
+          zIndex:      img?.style.zIndex || '',
+          domino:
+            item.classList.contains('domino-0') ? 'domino-0' :
+            item.classList.contains('domino-1') ? 'domino-1' :
+            item.classList.contains('domino-2') ? 'domino-2' : null,
+        };
+      });
+
+      localStorage.setItem('pinkoSlots', JSON.stringify(data));
+    }
+
+    function restoreSlots() {
+      const data = JSON.parse(localStorage.getItem('pinkoSlots') || '[]');
+
+      data.forEach((itemData, i) => {
+        if (!itemData || !itemData.src) return;
+
+        const slot = pinkoSlots[i];
+
+        // create source-like img
+        const sourceImg = document.createElement('img');
+        
+        sourceImg.src = itemData.src;
+        sourceImg.dataset.sourceIndex = itemData.sourceIndex;
+
+        sourceImg.className = 'card';
+        sourceImg.decoding = 'sync';
+
+        if (itemData.pinkoId) {
+          sourceImg.classList.add(itemData.pinkoId);
+        }
+
+        // create REAL pinko item using same pipeline
+        const wrapper = createPinkoItem(sourceImg);
+
+        if (itemData.domino === 'domino-0') wrapper.classList.add('domino-0');
+        if (itemData.domino === 'domino-1') wrapper.classList.add('domino-1');
+        if (itemData.domino === 'domino-2') wrapper.classList.add('domino-2');
+
+                const img = wrapper.querySelector('img');
+        if (img) img.style.animationDelay = `${-(Math.random() * 13).toFixed(2)}s`;
+
+        slot.innerHTML = '';
+        slot.appendChild(wrapper);
+      });
+    }
+
+
+    /* ─────────────────────────────
+       TIMER
+    ───────────────────────────── */
+
+    const pixelSize = 5;
+    const gap       = 1;
+    const cols      = 3;
+    const rows      = 5;
+
+    const digits = [
+      [1,1,1, 1,0,1, 1,0,1, 1,0,1, 1,1,1], // 0
+      [0,1,0, 1,1,0, 0,1,0, 0,1,0, 1,1,1], // 1
+      [1,1,1, 0,0,1, 1,1,1, 1,0,0, 1,1,1], // 2
+      [1,1,1, 0,0,1, 0,1,1, 0,0,1, 1,1,1], // 3
+      [1,0,1, 1,0,1, 1,1,1, 0,0,1, 0,0,1], // 4
+      [1,1,1, 1,0,0, 1,1,1, 0,0,1, 1,1,1], // 5
+      [1,1,1, 1,0,0, 1,1,1, 1,0,1, 1,1,1], // 6
+      [1,1,1, 0,0,1, 0,0,1, 0,1,0, 0,1,0], // 7
+      [1,1,1, 1,0,1, 1,1,1, 1,0,1, 1,1,1], // 8
+      [1,1,1, 1,0,1, 1,1,1, 0,0,1, 1,1,1], // 9
+    ];
+
+    function makeGlyph(pixels, color, scale) {
+      const ps = pixelSize * scale;
+      const g  = Math.ceil(gap * scale);
+      const gw = cols * ps + (cols - 1) * g;
+      const gh = rows * ps + (rows - 1) * g;
+
+      let rects = '';
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (!pixels[r * cols + c]) continue;
+          const x = c * (ps + g);
+          const y = r * (ps + g);
+          rects += `<rect x="${x}" y="${y}" width="${ps}" height="${ps}" fill="${color}"/>`;
+        }
+      }
+
+      return `
+        <svg
+          class="pixel-digit"
+          width="${gw}" height="${gh}"
+          viewBox="0 0 ${gw} ${gh}"
+          xmlns="http://www.w3.org/2000/svg"
+        >${rects}</svg>
+      `;
+    }
+
+    function makeDigitSVG(d, color) {
+      return makeGlyph(digits[d], color, 1);
+    }
+
+    const interval = 60;
+    const elMin    = document.getElementById('t-min');
+    const elSec    = document.getElementById('t-sec');
+
+    function tick() {
+      const left  = interval - (Math.floor(Date.now() / 1000) % interval);
+      const flash = left <= 10;
+      const color = flash ? '#E24B4A' : '#3CFFCF';
+      const mins  = Math.floor(left / 60);
+      const secs  = left % 60;
+
+      elMin.innerHTML =
+        makeDigitSVG(Math.floor(mins / 10), color) +
+        makeDigitSVG(mins % 10,             color);
+
+      elSec.innerHTML =
+        makeDigitSVG(Math.floor(secs / 10), color) +
+        makeDigitSVG(secs % 10,             color);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+
+
+    /* ─────────────────────────────
+       SCHEDULED RELOAD
+    ───────────────────────────── */
+
+    function scheduleReload() {
+      const msUntilNextMinute = 60000 - (Date.now() % 60000);
+      setTimeout(() => location.reload(), msUntilNextMinute);
+    }
+
+  </script>
+</body>
+</html>
