@@ -160,7 +160,7 @@
     }
 
     .pinko-item {
-      position: absolute;
+      position: relative;
       cursor: grab;
     }
 
@@ -365,7 +365,7 @@
 
     function init() {
       initCarousel();
-      requestAnimationFrame(() => requestAnimationFrame(restoreSlots));
+      setTimeout(restoreSlots, 150);
       initDragAndDrop();
       scheduleReload();
     }
