@@ -664,6 +664,9 @@
 
         slot.innerHTML = '';
         slot.appendChild(wrapper);
+
+        const img = wrapper.querySelector('img');
+        if (img) img.style.animationDelay = `${-(Math.random() * 13).toFixed(2)}s`;
       });
     }
 
