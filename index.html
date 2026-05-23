@@ -365,7 +365,7 @@
 
     function init() {
       initCarousel();
-      restoreSlots();
+      requestAnimationFrame(() => requestAnimationFrame(restoreSlots));
       initDragAndDrop();
       scheduleReload();
     }
@@ -616,7 +616,7 @@
         const img = item.querySelector('img');
 
         return {
-          src:         img ? img.src : null,
+          src: img ? img.src.split('/').pop() : null,
           sourceIndex: item.dataset.sourceIndex || null,
           pinkoId:     Array.from(img.classList).find(c => c.startsWith('pinkoId-')) || null,
           zIndex:      img?.style.zIndex || '',
@@ -658,8 +658,8 @@
         if (itemData.domino === 'domino-1') wrapper.classList.add('domino-1');
         if (itemData.domino === 'domino-2') wrapper.classList.add('domino-2');
 
-                const img = wrapper.querySelector('img');
-        if (img) img.style.animationDelay = `${-(Math.random() * 13).toFixed(2)}s`;
+                
+        
 
         slot.innerHTML = '';
         slot.appendChild(wrapper);
