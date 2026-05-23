@@ -574,10 +574,18 @@
 
     function handlePinkoItemClick(event) {
       event.stopPropagation();
-      const item  = event.currentTarget;
-      const index = item.dataset.sourceIndex;
+      const item = event.currentTarget;
+      const img = item.querySelector('img');
+
+      // unhide by pinkoId instead of sourceIndex
+      const pinkoIdClass = Array.from(img.classList).find(c => c.startsWith('pinkoId-'));
+      if (pinkoIdClass) {
+        document.querySelectorAll('.' + pinkoIdClass).forEach(card => {
+          card.closest('.card-main')?.classList.remove('hidden');
+        });
+      }
+
       item.remove();
-      toggleCardVisibility(index, false);
       saveSlots();
     }
 
@@ -641,12 +649,9 @@
 
         const slot = pinkoSlots[i];
 
-        // create source-like img
         const sourceImg = document.createElement('img');
-        
         sourceImg.src = itemData.src;
         sourceImg.dataset.sourceIndex = itemData.sourceIndex;
-
         sourceImg.className = 'card';
         sourceImg.decoding = 'sync';
 
@@ -654,18 +659,21 @@
           sourceImg.classList.add(itemData.pinkoId);
         }
 
-        // create REAL pinko item using same pipeline
         const wrapper = createPinkoItem(sourceImg);
 
         if (itemData.domino === 'domino-0') wrapper.classList.add('domino-0');
         if (itemData.domino === 'domino-1') wrapper.classList.add('domino-1');
         if (itemData.domino === 'domino-2') wrapper.classList.add('domino-2');
 
-                
-        
-
         slot.innerHTML = '';
         slot.appendChild(wrapper);
+
+        // hide the matching card in the carousel by pinkoId
+        if (itemData.pinkoId) {
+          document.querySelectorAll('.' + itemData.pinkoId).forEach(card => {
+            card.closest('.card-main')?.classList.add('hidden');
+          });
+        }
 
         const img = wrapper.querySelector('img');
         if (img) img.style.animationDelay = `${-(Math.random() * 13).toFixed(2)}s`;
