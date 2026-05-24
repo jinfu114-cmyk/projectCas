@@ -305,6 +305,14 @@
       image-rendering: pixelated;
     }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.blink {
+  animation: blink 1s step-start infinite;
+}
   </style>
 </head>
 
@@ -329,6 +337,21 @@
   ───────────────────────────── -->
   <div class="castell-border">
     <img class="castell-border-image" src="castellborder.png">
+
+    <!-- CONNECTED label -->
+    <div style="position:absolute; top:17%; right:11%; display:flex; align-items:center; gap:8px; z-index:10;">
+      <svg id="online-dot" class="blink" width="8" height="8" viewBox="0 0 8 8"
+        xmlns="http://www.w3.org/2000/svg"
+        style="image-rendering:pixelated;">
+        <rect x="0" y="0" width="8" height="8" fill="#3CFFCF"/>
+      </svg>
+      <div style="display:flex; gap:3px;" id="online-label"></div>
+    </div>
+
+    <!-- PINKO MACHINE label -->
+    <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
+      <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
+    </div>
 
     <div class="timer-wrap">
       <div class="timer-boxes">
@@ -369,6 +392,36 @@
       setTimeout(restoreSlots, 150);
       initDragAndDrop();
       scheduleReload();
+
+      const letters = {
+        C: [1,1,1, 1,0,0, 1,0,0, 1,0,0, 1,1,1],
+        O: [1,1,1, 1,0,1, 1,0,1, 1,0,1, 1,1,1],
+        N: [1,0,1, 1,1,1, 1,1,1, 1,0,1, 1,0,1],
+        E: [1,1,1, 1,0,0, 1,1,0, 1,0,0, 1,1,1],
+        T: [1,1,1, 0,1,0, 0,1,0, 0,1,0, 0,1,0],
+        D: [1,1,0, 1,0,1, 1,0,1, 1,0,1, 1,1,0],
+        P: [1,1,1, 1,0,1, 1,1,1, 1,0,0, 1,0,0],
+        I: [1,1,1, 0,1,0, 0,1,0, 0,1,0, 1,1,1],
+        K: [1,0,1, 1,0,1, 1,1,0, 1,0,1, 1,0,1],
+        H: [1,0,1, 1,0,1, 1,1,1, 1,0,1, 1,0,1],
+        A: [1,1,1, 1,0,1, 1,1,1, 1,0,1, 1,0,1],
+        M: [1,0,1, 1,1,1, 1,1,1, 1,0,1, 1,0,1],
+        G: [1,1,1, 1,0,0, 1,0,1, 1,0,1, 1,1,1],
+      };
+
+      document.getElementById('online-label').innerHTML =
+        ['C','O','N','N','E','C','T','E','D']
+          .map(ch => makeGlyph(letters[ch], '#3CFFCF', 0.5))
+          .join('');
+
+      document.getElementById('pinko-machine-label').innerHTML =
+        ['P','I','N','K','O']
+          .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
+          .join('') +
+        '<div style="width:6px;"></div>' +
+        ['M','A','C','H','I','N','E']
+          .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
+          .join('');
     }
 
 
