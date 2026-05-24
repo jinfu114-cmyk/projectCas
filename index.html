@@ -540,8 +540,18 @@
     function removeExistingPinko(targetSlot) {
       const existingItem = targetSlot.firstChild;
       if (!existingItem) return;
-      const oldIndex = existingItem.dataset.sourceIndex;
-      toggleCardVisibility(oldIndex, false);
+
+      const img = existingItem.querySelector('img');
+      const pinkoIdClass = img
+        ? Array.from(img.classList).find(c => c.startsWith('pinkoId-'))
+        : null;
+
+      if (pinkoIdClass) {
+        document.querySelectorAll('.' + pinkoIdClass).forEach(card => {
+          card.closest('.card-main')?.classList.remove('hidden');
+        });
+      }
+
       existingItem.remove();
     }
 
