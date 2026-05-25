@@ -410,6 +410,8 @@
         A: [1,1,1, 1,0,1, 1,1,1, 1,0,1, 1,0,1],
         M: [1,0,1, 1,1,1, 1,1,1, 1,0,1, 1,0,1],
         G: [1,1,1, 1,0,0, 1,0,1, 1,0,1, 1,1,1],
+        EXC: [0,1,0, 0,1,0, 0,1,0, 0,0,0, 0,1,0],  // !
+        DASH: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],  // -
       };
 
       document.getElementById('online-label').innerHTML =
@@ -418,7 +420,7 @@
           .join('');
 
       document.getElementById('pinko-machine-label').innerHTML =
-        ['P','I','N','K','O']
+        ['P','I','N','K','O','DASH','P','O','N','EXC']
           .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
           .join('') +
         '<div style="width:6px;"></div>' +
