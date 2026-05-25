@@ -113,16 +113,19 @@
 
     .group {
       display: flex;
+      flex-wrap: nowrap;  /* ADD THIS */
       gap: 1px;
       padding: 0 1px 8.5px 0;
       animation: scroll 16s linear infinite;
       will-change: transform;
       transform: translateZ(0);
+      flex-shrink: 0;     /* ADD THIS */
     }
 
     .card-main {
       overflow: hidden;
       border-radius: 0.2em;
+      flex-shrink: 0;  /* ADD THIS */
     }
 
     .card {
