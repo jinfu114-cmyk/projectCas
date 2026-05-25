@@ -339,11 +339,11 @@
     <img class="castell-border-image" src="castellborder.png">
 
     <!-- CONNECTED label -->
-    <div style="position:absolute; top:17%; right:11%; display:flex; align-items:center; gap:8px; z-index:10;">
-      <svg id="online-dot" class="blink" width="8" height="8" viewBox="0 0 8 8"
+    <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
+      <svg id="online-dot" class="blink" width="7" height="7" viewBox="0 0 7 7"
         xmlns="http://www.w3.org/2000/svg"
         style="image-rendering:pixelated;">
-        <rect x="0" y="0" width="8" height="8" fill="#3CFFCF"/>
+        <rect x="0" y="0" width="7" height="7" fill="#FBFFDB"/>
       </svg>
       <div style="display:flex; gap:3px;" id="online-label"></div>
     </div>
@@ -411,7 +411,7 @@
 
       document.getElementById('online-label').innerHTML =
         ['C','O','N','N','E','C','T','E','D']
-          .map(ch => makeGlyph(letters[ch], '#3CFFCF', 0.5))
+          .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
           .join('');
 
       document.getElementById('pinko-machine-label').innerHTML =
