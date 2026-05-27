@@ -403,11 +403,7 @@
 
     <!-- CONNECTED label -->
     <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
-      <svg id="online-dot" class="blink" width="7" height="7" viewBox="0 0 7 7"
-        xmlns="http://www.w3.org/2000/svg"
-        style="image-rendering:pixelated;">
-        <rect x="0" y="0" width="7" height="7" fill="#FBFFDB"/>
-      </svg>
+      <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
       <div style="display:flex; gap:3px;" id="online-label"></div>
     </div>
 
@@ -480,6 +476,11 @@
         ['C','O','N','N','E','C','T','E','D']
           .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
           .join('');
+
+      document.getElementById('online-dot').innerHTML =
+        makeGlyph(letters['HEART'], '#FBFFDB', 0.5);
+
+
 
       document.getElementById('pinko-machine-label').innerHTML =
         '<span style="filter: drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
