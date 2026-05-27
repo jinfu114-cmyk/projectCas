@@ -126,6 +126,63 @@
       overflow: hidden;
       border-radius: 0.2em;
       flex-shrink: 0;  /* ADD THIS */
+      background: transparent;
+    }
+
+    .card-main {
+      position: relative; /* already set in your layout, just ensure it */
+    }
+
+    .card-main::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      -webkit-mask-image: var(--card-mask);
+      mask-image: var(--card-mask);
+      -webkit-mask-size: contain;
+      mask-size: 215px;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      opacity: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 25%,
+        rgba(255,255,220,0.0) 40%,
+        rgba(255,255,220,0.75) 50%,
+        rgba(255,255,255,0.95) 52%,
+        rgba(255,255,220,0.75) 54%,
+        rgba(255,255,220,0.0) 65%,
+        transparent 80%
+      );
+      background-size: 280% 100%;
+      background-position: 160% 0;
+      opacity: 0;
+    }
+
+    .card-main::after {
+      animation: none;
+    }
+
+    .card-main.glint-active::after {
+      animation: glintSwipe 10s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    @keyframes glintSwipe {
+      0%   { background-position: 160% 0; opacity: 0; }
+      5%   { opacity: 1; }
+      30%  { background-position: -60% 0; opacity: 0; }
+      100% { background-position: -60% 0; opacity: 0; }
+    }
+
+    /* ── IS-MASK ── */
+    .card-main.is-mask .card {
+      -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 55%, transparent 100%);
+      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 55%, transparent 100%);
+      filter: contrast(1.05) saturate(1.1);
     }
 
     .card {
@@ -308,14 +365,14 @@
       image-rendering: pixelated;
     }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
 
-.blink {
-  animation: blink 1s step-start infinite;
-}
+    .blink {
+      animation: blink 1s step-start infinite;
+    }
   </style>
 </head>
 
@@ -395,6 +452,7 @@
       setTimeout(restoreSlots, 150);
       initDragAndDrop();
       scheduleReload();
+      initVisibleGlints();
 
       const letters = {
         C: [1,1,1, 1,0,0, 1,0,0, 1,0,0, 1,1,1],
@@ -474,16 +532,14 @@
     function renderCards(pinkoDexList) {
       const savedSlots = JSON.parse(localStorage.getItem('pinkoSlots') || '[]');
       const placedIds  = new Set(
-        savedSlots
-          .filter(s => s && s.pinkoId)
-          .map(s => s.pinkoId)
+        savedSlots.filter(s => s && s.pinkoId).map(s => s.pinkoId)
       );
 
       groupElement.innerHTML = pinkoDexList.map(id => {
         const pinkoIdClass = `pinkoId-${id}`;
         const isHidden     = placedIds.has(pinkoIdClass) ? ' hidden' : '';
         return `
-          <div class="card-main${isHidden}">
+          <div class="card-main${isHidden}" style="--card-mask: url('pinko-${id}.png')">
             <img
               class="card ${pinkoIdClass} rotation-left"
               draggable="false"
@@ -681,6 +737,16 @@
       dragImg.style.top  = y - dragImg.offsetHeight / 2 + 'px';
     }
 
+    function triggerGlint(cardMainEl) {
+      cardMainEl.classList.remove('glinting');
+      void cardMainEl.offsetWidth; // force reflow
+      cardMainEl.classList.add('glinting');
+      cardMainEl.addEventListener('animationend',
+        () => cardMainEl.classList.remove('glinting'),
+        { once: true }
+      );
+    }
+
     function toggleCardVisibility(index, hide) {
       document.querySelectorAll('.group').forEach(group => {
         const card = group.children[index];
@@ -748,6 +814,7 @@
         if (itemData.domino === 'domino-2') wrapper.classList.add('domino-2');
 
         slot.innerHTML = '';
+        wrapper.style.setProperty('--card-mask', `url('${itemData.src}')`);
         slot.appendChild(wrapper);
 
         // hide the matching card in the carousel by pinkoId
@@ -850,6 +917,63 @@
         localStorage.removeItem('pinkoDex');
         location.reload();
       }, msUntilNextMinute);
+    }
+
+    /* ─────────────────────────────
+      VISIBLE CARD GLINT SYSTEM
+    ───────────────────────────── */
+
+    function initVisibleGlints() {
+
+      const carousel = document.querySelector('.carousel');
+
+      const GLINT_SIZE = 7; // fixed number of cards (change this anytime)
+
+      function getCenterIndex(cards) {
+        const rect = carousel.getBoundingClientRect();
+        let closestIndex = 0;
+        let closestDist = Infinity;
+
+        cards.forEach((card, i) => {
+          const r = card.getBoundingClientRect();
+          const cardCenter = (r.left + r.right) / 2;
+          const carouselCenter = (rect.left + rect.right) / 2;
+          const dist = Math.abs(cardCenter - carouselCenter);
+
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIndex = i;
+          }
+        });
+
+        return closestIndex;
+      }
+
+      function triggerBatchGlint() {
+
+        const cards = Array.from(document.querySelectorAll('.card-main'));
+        if (!cards.length) return;
+
+        const centerIndex = getCenterIndex(cards);
+
+        const half = Math.floor(GLINT_SIZE / 2);
+
+        const start = Math.max(0, centerIndex - half);
+        const end   = Math.min(cards.length, centerIndex + half + 1);
+
+        const batch = cards.slice(start, end);
+
+        // reset
+        batch.forEach(c => c.classList.remove('glint-active'));
+
+        void document.body.offsetWidth;
+
+        // apply glint
+        batch.forEach(c => c.classList.add('glint-active'));
+      }
+
+      triggerBatchGlint();
+      setInterval(triggerBatchGlint, 10000);
     }
 
   </script>
