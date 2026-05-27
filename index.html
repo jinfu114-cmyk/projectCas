@@ -374,6 +374,8 @@
     .blink {
       animation: blink 1s step-start infinite;
     }
+
+    
   </style>
 </head>
 
@@ -471,6 +473,7 @@
         G: [1,1,1, 1,0,0, 1,0,1, 1,0,1, 1,1,1],
         EXC: [0,1,0, 0,1,0, 0,1,0, 0,0,0, 0,1,0],  // !
         DASH: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],  // -
+        HEART: [0,0,0, 1,0,1, 1,1,1, 0,1,0, 0,0,0],
       };
 
       document.getElementById('online-label').innerHTML =
@@ -479,13 +482,25 @@
           .join('');
 
       document.getElementById('pinko-machine-label').innerHTML =
+        '<span style="filter: drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
+          ['HEART','HEART','HEART']
+            .map(ch => makeGlyph(letters[ch], '#FFB3D9', 0.5))
+            .join('') +
+        '</span>' +
+        '<div style="width:6px;"></div>' +
         ['P','I','N','K','O','DASH','P','O','N','EXC']
           .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
           .join('') +
         '<div style="width:6px;"></div>' +
         ['M','A','C','H','I','N','E']
           .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
-          .join('');
+          .join('') +
+        '<div style="width:6px;"></div>' +
+        '<span style="filter: drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
+          ['HEART','HEART','HEART']
+            .map(ch => makeGlyph(letters[ch], '#FFB3D9', 0.5))
+            .join('') +
+        '</span>';
     }
 
 
