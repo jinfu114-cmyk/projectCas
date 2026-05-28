@@ -517,15 +517,18 @@
         '</span>';
 
         document.getElementById('battle-label').innerHTML =
-          '<div style="width:6px;"></div>' +
-            ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC']
-              .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.53))
-              .join('') +
-          '<div style="width:6px;"></div>' +
-            ['C','L','A','S','S','I','C']
-              .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.53))
-              .join('') +          
-          '</span>';
+          
+        '<div style="width:6px;"></div>' +
+          ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC']
+            .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+            .join('') +
+        '<div style="width:6px;"></div>' +
+          ['C','L','A','S','S','I','C']
+            .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+            .join('') +
+        '<div style="width:6px;"></div>' +
+        
+        '</span>';
     }
 
 
@@ -875,8 +878,8 @@
        TIMER
     ───────────────────────────── */
 
-    const pixelSize = 5;
-    const gap       = 1;
+    const pixelSize = 6;
+    const gap       = 0;
     const cols      = 3;
     const rows      = 5;
 
