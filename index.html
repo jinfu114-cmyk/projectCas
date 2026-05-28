@@ -483,6 +483,11 @@
         EXC: [0,1,0, 0,1,0, 0,1,0, 0,0,0, 0,1,0],  // !
         DASH: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],  // -
         HEART: [0,0,0, 1,0,1, 1,1,1, 0,1,0, 0,0,0],
+        SWORDHANDLE: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],
+        SWORDGUARD: [0,1,0, 0,1,1, 1,1,1, 0,1,1, 0,1,0],
+        SWORDMIDDLE: [0,0,0, 1,1,1, 1,1,1, 1,1,1, 0,0,0],
+        SWORDTIP: [0,0,0, 1,1,0, 1,1,1, 1,1,0, 0,0,0],
+
       };
 
       document.getElementById('online-label').innerHTML =
@@ -516,19 +521,47 @@
             .join('') +
         '</span>';
 
-        document.getElementById('battle-label').innerHTML =
-          
-        '<div style="width:6px;"></div>' +
-          ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC']
-            .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+      document.getElementById('battle-label').innerHTML =
+        `<span style="
+          display:flex;
+          align-items:center;
+          gap:0;
+        ">` +
+          ['SWORDHANDLE','SWORDGUARD','SWORDMIDDLE','SWORDMIDDLE','SWORDTIP']
+            .map(ch =>
+              `<div style="margin-right:-1px;">${
+                makeGlyph(letters[ch], '#FFFFFF', 0.5)
+              }</div>`
+            )
             .join('') +
+        `</span>` +
         '<div style="width:6px;"></div>' +
-          ['C','L','A','S','S','I','C']
-            .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+
+        ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC']
+          .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+          .join('') +
+        '<div style="width:6px;"></div>' +
+
+        ['C','L','A','S','S','I','C']
+          .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
+          .join('') +
+
+        '<div style="width:6px;"></div>' +
+
+        `<span style="
+          display:flex;
+          align-items:center;
+          gap:0;
+          transform: scaleX(-1);
+        ">` +
+          ['SWORDHANDLE','SWORDGUARD','SWORDMIDDLE','SWORDMIDDLE','SWORDTIP']
+            .map(ch =>
+              `<div style="margin-right:-1px;">${
+                makeGlyph(letters[ch], '#FFFFFF', 0.5)
+              }</div>`
+            )
             .join('') +
-        '<div style="width:6px;"></div>' +
-        
-        '</span>';
+        `</span>`;
     }
 
 
