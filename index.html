@@ -8,10 +8,6 @@
 
   <style>
 
-    /* ─────────────────────────────
-       GLOBAL RESET / SELECTION
-    ───────────────────────────── */
-
     * {
       user-select: none;
       -webkit-user-select: none;
@@ -19,19 +15,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html,
-    body {
+    html, body {
       overscroll-behavior: none;
     }
 
     img {
       -webkit-user-drag: none;
     }
-
-
-    /* ─────────────────────────────
-       BASE / LAYOUT
-    ───────────────────────────── */
 
     body {
       background-image: url('castellbg1.png');
@@ -43,10 +33,17 @@
       overflow-x: hidden;
     }
 
-
-    /* ─────────────────────────────
-       HEADER / LOGO
-    ───────────────────────────── */
+    /* ── PIXEL CURTAIN ── */
+    #pixel-curtain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99999;
+      image-rendering: pixelated;
+    }
 
     .logo-container {
       display: flex;
@@ -69,11 +66,6 @@
       image-rendering: auto;
     }
 
-
-    /* ─────────────────────────────
-       BORDER
-    ───────────────────────────── */
-
     .castell-border {
       display: flex;
       flex-direction: column;
@@ -88,11 +80,6 @@
       width: 900px;
       height: auto;
     }
-
-
-    /* ─────────────────────────────
-       CAROUSEL
-    ───────────────────────────── */
 
     .carousel,
     .card,
@@ -113,24 +100,21 @@
 
     .group {
       display: flex;
-      flex-wrap: nowrap;  /* ADD THIS */
+      flex-wrap: nowrap;
       gap: 1px;
       padding: 0 1px 8.5px 0;
       animation: scroll 16s linear infinite;
       will-change: transform;
       transform: translateZ(0);
-      flex-shrink: 0;     /* ADD THIS */
+      flex-shrink: 0;
     }
 
     .card-main {
       overflow: hidden;
       border-radius: 0.2em;
-      flex-shrink: 0;  /* ADD THIS */
+      flex-shrink: 0;
       background: transparent;
-    }
-
-    .card-main {
-      position: relative; /* already set in your layout, just ensure it */
+      position: relative;
     }
 
     .card-main::after {
@@ -161,11 +145,6 @@
       );
       background-size: 280% 100%;
       background-position: -60% 0;
-      opacity: 0;
-    }
-
-    .card-main::after {
-      animation: none;
     }
 
     .card-main.glint-active::after {
@@ -179,7 +158,6 @@
       100% { background-position: 160% 0; opacity: 0; }
     }
 
-    /* ── IS-MASK ── */
     .card-main.is-mask .card {
       -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 55%, transparent 100%);
       mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 55%, transparent 100%);
@@ -201,15 +179,8 @@
     }
 
     .card:hover {
-      filter:
-        drop-shadow(0 0 2px #fff)
-        drop-shadow(0 0 6px #fff);
+      filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px #fff);
     }
-
-
-    /* ─────────────────────────────
-       SHIRT AREA
-    ───────────────────────────── */
 
     .shirt-container {
       margin: 100px auto;
@@ -235,15 +206,8 @@
     }
 
     .pinko-item:hover img {
-      filter:
-        drop-shadow(0 0 1px #ffffff)
-        drop-shadow(0 0 3px #ffffff);
+      filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 3px #ffffff);
     }
-
-
-    /* ─────────────────────────────
-       SLOT AREAS
-    ───────────────────────────── */
 
     .shirt-pinko-placement-width,
     .shirt-pinko-placement-width1,
@@ -259,11 +223,6 @@
     .shirt-pinko-placement-width  { left: 172px; top: 185px; z-index: 1000; }
     .shirt-pinko-placement-width1 { left: 236px; top: 153px; z-index: 800;  }
     .shirt-pinko-placement-width2 { left: 300px; top: 121px; z-index: 600;  }
-
-
-    /* ─────────────────────────────
-       SHIRT CONTAINER
-    ───────────────────────────── */
 
     .castell-shirt-container {
       display: flex;
@@ -288,28 +247,13 @@
       pointer-events: none;
     }
 
-
-    /* ─────────────────────────────
-       UTILITIES
-    ───────────────────────────── */
-
-    .hidden       { visibility: hidden; }
+    .hidden        { visibility: hidden; }
     .rotation-left { transform: scaleX(-1); }
 
-
-    /* ─────────────────────────────
-       SCROLL ANIMATION
-    ───────────────────────────── */
-
     @keyframes scroll {
-      from { transform: translateX(0);    }
+      from { transform: translateX(0);     }
       to   { transform: translateX(-100%); }
     }
-
-
-    /* ─────────────────────────────
-       DOMINO PULSE  (10s cooldown)
-    ───────────────────────────── */
 
     .domino-0 img,
     .domino-1 img,
@@ -325,20 +269,10 @@
       100% { transform: scale(1);    }
     }
 
-
-    /* ─────────────────────────────
-       DRAGGING CURSOR STATE
-    ───────────────────────────── */
-
     body.is-dragging,
     body.is-dragging * {
       cursor: none !important;
     }
-
-
-    /* ─────────────────────────────
-       TIMER
-    ───────────────────────────── */
 
     .timer-wrap {
       position: absolute;
@@ -374,43 +308,32 @@
     .blink {
       animation: blink 1s step-start infinite;
     }
-    
+
   </style>
 </head>
 
 <body>
 
-  <!-- ─────────────────────────────
-       HEADER
-  ───────────────────────────── -->
+  <!-- PIXEL CURTAIN CANVAS -->
+  <canvas id="pixel-curtain"></canvas>
+
   <div class="logo-container">
     <img class="logo" draggable="false" src="castelllogomain.png">
   </div>
 
-  <!-- ─────────────────────────────
-       CAROUSEL
-  ───────────────────────────── -->
   <div class="carousel">
     <div class="group"></div>
   </div>
 
-  <!-- ─────────────────────────────
-       BORDER  +  TIMER
-  ───────────────────────────── -->
   <div class="castell-border">
     <img class="castell-border-image" src="castellborder.png">
-
-    <!-- CONNECTED label -->
     <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
       <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
       <div style="display:flex; gap:3px;" id="online-label"></div>
     </div>
-
-    <!-- PINKO MACHINE label -->
     <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
       <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
     </div>
-
     <div class="timer-wrap">
       <div class="timer-boxes">
         <div class="timer-display" id="t-min"></div>
@@ -419,18 +342,12 @@
     </div>
   </div>
 
-  <!-- ─────────────────────────────
-       SHIRT AREA
-  ───────────────────────────── -->
   <div class="shirt-container">
     <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
     <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
     <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
   </div>
 
-  <!-- ─────────────────────────────
-       SHIRT CONTAINER
-  ───────────────────────────── -->
   <div class="castell-shirt-container">
     <div style="position:absolute; top:79px; left:50%; transform:translateX(-50%); display:flex; gap:3px; z-index:10;" id="battle-label"></div>
     <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
@@ -439,6 +356,108 @@
 
 
   <script>
+
+    /* ─────────────────────────────
+       PIXEL CURTAIN TRANSITION
+    ───────────────────────────── */
+
+    (function() {
+      const canvas = document.getElementById('pixel-curtain');
+      const SZ = 80;
+      const GLITCH_COLORS = ['#ffffff','#eeeeee','#dddddd','#ffffff'];
+      let animId = null;
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function animate(direction, duration, onDone) {
+        if (animId) cancelAnimationFrame(animId);
+        resize();
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const cols = Math.ceil(W / SZ);
+        const rows = Math.ceil(H / SZ);
+        const start = performance.now();
+
+        function frame(now) {
+          ctx.clearRect(0, 0, W, H);
+          const elapsed = now - start;
+          const globalProgress = Math.min(1, elapsed / duration);
+
+          for (let r = 0; r < rows; r++) {
+            const rowNorm = r / (rows - 1);
+            const frontProgress = direction === 'close'
+              ? globalProgress * 1.3 - rowNorm * 0.4
+              : (1 - globalProgress) * 1.3 - (1 - rowNorm) * 0.4;
+
+            const rowAlpha = Math.max(0, Math.min(1, frontProgress));
+            if (rowAlpha <= 0) continue;
+
+            for (let c = 0; c < cols; c++) {
+              const distFromFront = Math.abs(frontProgress - 0.5);
+              const glitchZone = distFromFront < 0.35;
+              const noise = Math.sin(c * 7.3 + r * 3.1 + elapsed * 0.05) * 0.5 + 0.5;
+              const flicker = glitchZone && noise > 0.4;
+
+              if (flicker && rowAlpha > 0.1 && rowAlpha < 0.95) {
+                const hex = GLITCH_COLORS[Math.floor((Math.sin(c * 13 + r * 7 + elapsed * 0.03) * 0.5 + 0.5) * GLITCH_COLORS.length)].replace('#','');
+                const rr = parseInt(hex.substring(0,2),16);
+                const gg = parseInt(hex.substring(2,4),16);
+                const bb = parseInt(hex.substring(4,6),16);
+                const glitchAlpha = Math.min(1, rowAlpha * 1.5) * (0.5 + noise * 0.5);
+                ctx.fillStyle = `rgba(${rr},${gg},${bb},${glitchAlpha})`;
+                const glitchW = SZ * (1 + Math.floor(noise * 2));
+                const offsetX = Math.floor((Math.sin(r * 5.7 + elapsed * 0.04) * 0.5 + 0.5) * 3) * SZ;
+                ctx.fillRect(Math.min(c * SZ + offsetX, W - glitchW), r * SZ, glitchW, SZ);
+              } else {
+                if (rowAlpha > 0.02) {
+                  ctx.fillStyle = `rgba(255,255,255,${rowAlpha})`;
+                  ctx.fillRect(c * SZ, r * SZ, SZ, SZ);
+                }
+              }
+            }
+          }
+
+          if (globalProgress < 1) {
+            animId = requestAnimationFrame(frame);
+          } else {
+            animId = null;
+            if (direction === 'close') {
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, W, H);
+            } else {
+              ctx.clearRect(0, 0, W, H);
+            }
+            onDone && onDone();
+          }
+        }
+        animId = requestAnimationFrame(frame);
+      }
+
+      // OPEN on page load — curtain lifts away
+      window.addEventListener('load', () => {
+        resize();
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        setTimeout(() => animate('open', 950), 100);
+      });
+
+      // CLOSE on refresh / navigation — curtain drops, then reloads
+      window.__curtainClose = function(cb) {
+        animate('close', 750, () => {
+          setTimeout(cb, 100);
+        });
+      };
+
+      window.addEventListener('resize', () => {
+        if (animId) return;
+        resize();
+      });
+    })();
+
 
     /* ─────────────────────────────
        INIT
@@ -480,28 +499,24 @@
         X: [1,0,1, 1,0,1, 0,1,0, 1,0,1, 1,0,1],
         Y: [1,0,1, 1,0,1, 0,1,0, 0,1,0, 0,1,0],
         Z: [1,1,1, 0,0,1, 0,1,0, 1,0,0, 1,1,1],
-        EXC: [0,1,0, 0,1,0, 0,1,0, 0,0,0, 0,1,0],  // !
-        DASH: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],  // -
+        EXC:  [0,1,0, 0,1,0, 0,1,0, 0,0,0, 0,1,0],
+        DASH: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],
         HEART: [0,0,0, 1,0,1, 1,1,1, 0,1,0, 0,0,0],
         SWORDHANDLE: [0,0,0, 0,0,0, 1,1,1, 0,0,0, 0,0,0],
-        SWORDGUARD: [0,1,0, 0,1,1, 1,1,1, 0,1,1, 0,1,0],
+        SWORDGUARD:  [0,1,0, 0,1,1, 1,1,1, 0,1,1, 0,1,0],
         SWORDMIDDLE: [0,0,0, 1,1,1, 1,1,1, 1,1,1, 0,0,0],
-        SWORDTIP: [0,0,0, 1,1,0, 1,1,1, 1,1,0, 0,0,0],
-
+        SWORDTIP:    [0,0,0, 1,1,0, 1,1,1, 1,1,0, 0,0,0],
       };
 
       document.getElementById('online-label').innerHTML =
         ['D','E','P','L','O','Y','I','N','G']
-          .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
-          .join('');
+          .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5)).join('');
 
       document.getElementById('online-dot').innerHTML =
         makeGlyph(letters['SWORDTIP'], '#FBFFDB', 0.5);
 
-
-
       document.getElementById('pinko-machine-label').innerHTML =
-        '<span style="filter: drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
+        '<span style="display:flex;align-items:center;gap:4px;filter:drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
           ['HEART','HEART','HEART']
             .map(ch => makeGlyph(letters[ch], '#FFB3D9', 0.5))
             .join('') +
@@ -515,52 +530,25 @@
             .map(ch => makeGlyph(letters[ch], '#FBFFDB', 0.5))
             .join('') +
         '<div style="width:6px;"></div>' +
-        '<span style="filter: drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
+        '<span style="display:flex;align-items:center;gap:4px;filter:drop-shadow(0 0 2px #FF7EB3) drop-shadow(0 0 5px #FF7EB3);">' +
           ['HEART','HEART','HEART']
             .map(ch => makeGlyph(letters[ch], '#FFB3D9', 0.5))
             .join('') +
         '</span>';
 
       document.getElementById('battle-label').innerHTML =
-        `<span style="
-          display:flex;
-          align-items:center;
-          gap:0;
-        ">` +
+        `<span style="display:flex;align-items:center;gap:0;">` +
           ['SWORDHANDLE','SWORDGUARD','SWORDMIDDLE','SWORDMIDDLE','SWORDTIP']
-            .map(ch =>
-              `<div style="margin-right:-1px;">${
-                makeGlyph(letters[ch], '#FFFFFF', 0.5)
-              }</div>`
-            )
-            .join('') +
+            .map(ch => `<div style="margin-right:-1px;">${makeGlyph(letters[ch], '#FFFFFF', 0.5)}</div>`).join('') +
         `</span>` +
         '<div style="width:6px;"></div>' +
-
-        ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC']
-          .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
-          .join('') +
+          ['B','A','T','T','L','E','DASH','K','N','I','G','H','T','EXC'].map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5)).join('') +
+          '<div style="width:6px;"></div>' +
+          ['C','L','A','S','S','I','C'].map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5)).join('') +
         '<div style="width:6px;"></div>' +
-
-        ['C','L','A','S','S','I','C']
-          .map(ch => makeGlyph(letters[ch], '#FFFFFF', 0.5))
-          .join('') +
-
-        '<div style="width:6px;"></div>' +
-
-        `<span style="
-          display:flex;
-          align-items:center;
-          gap:0;
-          transform: scaleX(-1);
-        ">` +
+        `<span style="display:flex;align-items:center;gap:0;transform:scaleX(-1);">` +
           ['SWORDHANDLE','SWORDGUARD','SWORDMIDDLE','SWORDMIDDLE','SWORDTIP']
-            .map(ch =>
-              `<div style="margin-right:-1px;">${
-                makeGlyph(letters[ch], '#FFFFFF', 0.5)
-              }</div>`
-            )
-            .join('') +
+            .map(ch => `<div style="margin-right:-1px;">${makeGlyph(letters[ch], '#FFFFFF', 0.5)}</div>`).join('') +
         `</span>`;
     }
 
@@ -597,10 +585,7 @@
       const used = new Set();
       while (list.length < amount) {
         const random = Math.floor(Math.random() * 10) + 1;
-        if (!used.has(random)) {
-          used.add(random);
-          list.push(random);
-        }
+        if (!used.has(random)) { used.add(random); list.push(random); }
       }
       localStorage.setItem('pinkoDex', JSON.stringify(list));
       return list;
@@ -608,23 +593,14 @@
 
     function renderCards(pinkoDexList) {
       const savedSlots = JSON.parse(localStorage.getItem('pinkoSlots') || '[]');
-      const placedIds  = new Set(
-        savedSlots.filter(s => s && s.pinkoId).map(s => s.pinkoId)
-      );
-
+      const placedIds  = new Set(savedSlots.filter(s => s && s.pinkoId).map(s => s.pinkoId));
       groupElement.innerHTML = pinkoDexList.map(id => {
         const pinkoIdClass = `pinkoId-${id}`;
-        const isHidden     = placedIds.has(pinkoIdClass) ? ' hidden' : '';
+        const isHidden = placedIds.has(pinkoIdClass) ? ' hidden' : '';
         return `
           <div class="card-main${isHidden}" style="--card-mask: url('pinko-${id}.png')">
-            <img
-              class="card ${pinkoIdClass} rotation-left"
-              draggable="false"
-              src="pinko-${id}.png"
-              decoding="sync"
-            >
-          </div>
-        `;
+            <img class="card ${pinkoIdClass} rotation-left" draggable="false" src="pinko-${id}.png" decoding="sync">
+          </div>`;
       }).join('');
     }
 
@@ -647,31 +623,20 @@
     function handleMouseDown(event) {
       event.preventDefault();
       if (isDragging) return;
-
       const card = event.target;
       if (!card.classList.contains('card')) return;
-
       navigator.vibrate?.(10);
-      
       isDragging = true;
       document.body.classList.add('is-dragging');
-
       const parentCard = card.parentNode;
       const index = Array.from(parentCard.parentNode.children).indexOf(parentCard);
-
       dragImg = card.cloneNode(true);
       dragImg.dataset.sourceIndex = index;
-
       toggleCardVisibility(index, true);
       document.body.appendChild(dragImg);
-
       Object.assign(dragImg.style, {
-        position:        'absolute',
-        pointerEvents:   'none',
-        zIndex:          '1000',
-        imageRendering:  'auto',
+        position: 'absolute', pointerEvents: 'none', zIndex: '1000', imageRendering: 'auto',
       });
-
       moveAt(event.pageX, event.pageY);
     }
 
@@ -684,38 +649,22 @@
     function handleMouseUp(event) {
       event.preventDefault();
       if (!dragImg) return;
-
       const targetSlot = getTargetSlot(event.clientX, event.clientY);
-      const index      = dragImg.dataset.sourceIndex;
-
-      if (!targetSlot) {
-        toggleCardVisibility(index, false);
-        cleanupDrag();
-        return;
-      }
-
+      const index = dragImg.dataset.sourceIndex;
+      if (!targetSlot) { toggleCardVisibility(index, false); cleanupDrag(); return; }
       placePinko(targetSlot);
       toggleCardVisibility(index, true);
       cleanupDrag();
     }
 
     function getTargetSlot(x, y) {
-      let bestSlot  = null;
-      let highestZ  = -Infinity;
-
+      let bestSlot = null, highestZ = -Infinity;
       pinkoSlots.forEach(slot => {
         const rect = slot.getBoundingClientRect();
-        const z    = parseInt(window.getComputedStyle(slot).zIndex) || 0;
-        const inside =
-          x >= rect.left && x <= rect.right &&
-          y >= rect.top  && y <= rect.bottom;
-
-        if (inside && z > highestZ) {
-          highestZ = z;
-          bestSlot = slot;
-        }
+        const z = parseInt(window.getComputedStyle(slot).zIndex) || 0;
+        const inside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+        if (inside && z > highestZ) { highestZ = z; bestSlot = slot; }
       });
-
       return bestSlot;
     }
 
@@ -731,18 +680,13 @@
     function removeExistingPinko(targetSlot) {
       const existingItem = targetSlot.firstChild;
       if (!existingItem) return;
-
       const img = existingItem.querySelector('img');
-      const pinkoIdClass = img
-        ? Array.from(img.classList).find(c => c.startsWith('pinkoId-'))
-        : null;
-
+      const pinkoIdClass = img ? Array.from(img.classList).find(c => c.startsWith('pinkoId-')) : null;
       if (pinkoIdClass) {
         document.querySelectorAll('.' + pinkoIdClass).forEach(card => {
           card.closest('.card-main')?.classList.remove('hidden');
         });
       }
-
       existingItem.remove();
     }
 
@@ -754,35 +698,19 @@
 
     function createPinkoItem(sourceImg) {
       const finalImg = sourceImg.cloneNode(true);
-
-      finalImg.style.position       = 'static';
+      finalImg.style.position = 'static';
       finalImg.style.imageRendering = 'auto';
-      
       finalImg.classList.remove('rotation-left');
-
-      // 🔥 same behavior everywhere
       finalImg.draggable = false;
       finalImg.setAttribute('draggable', 'false');
       finalImg.decoding = 'sync';
-      // 🔥 lazy loading
-      //finalImg.loading = 'lazy';
-
-      const pinkoIdClass = Array.from(sourceImg.classList)
-        .find(c => c.startsWith('pinkoId-'));
-
-      if (pinkoIdClass) {
-        finalImg.classList.add(pinkoIdClass);
-      }
-
+      const pinkoIdClass = Array.from(sourceImg.classList).find(c => c.startsWith('pinkoId-'));
+      if (pinkoIdClass) finalImg.classList.add(pinkoIdClass);
       const wrapper = document.createElement('div');
-
-      wrapper.className           = 'pinko-item';
+      wrapper.className = 'pinko-item';
       wrapper.dataset.sourceIndex = sourceImg.dataset.sourceIndex;
-
       wrapper.appendChild(finalImg);
-
       wrapper.addEventListener('pointerdown', handlePinkoItemClick);
-
       return wrapper;
     }
 
@@ -791,15 +719,12 @@
       navigator.vibrate?.(10);
       const item = event.currentTarget;
       const img = item.querySelector('img');
-
-      // unhide by pinkoId instead of sourceIndex
       const pinkoIdClass = Array.from(img.classList).find(c => c.startsWith('pinkoId-'));
       if (pinkoIdClass) {
         document.querySelectorAll('.' + pinkoIdClass).forEach(card => {
           card.closest('.card-main')?.classList.remove('hidden');
         });
       }
-
       item.remove();
       saveSlots();
     }
@@ -814,16 +739,6 @@
       dragImg.style.top  = y - dragImg.offsetHeight / 2 + 'px';
     }
 
-    function triggerGlint(cardMainEl) {
-      cardMainEl.classList.remove('glinting');
-      void cardMainEl.offsetWidth; // force reflow
-      cardMainEl.classList.add('glinting');
-      cardMainEl.addEventListener('animationend',
-        () => cardMainEl.classList.remove('glinting'),
-        { once: true }
-      );
-    }
-
     function toggleCardVisibility(index, hide) {
       document.querySelectorAll('.group').forEach(group => {
         const card = group.children[index];
@@ -834,7 +749,7 @@
 
     function cleanupDrag() {
       dragImg.remove();
-      dragImg    = null;
+      dragImg = null;
       isDragging = false;
       document.body.classList.remove('is-dragging');
     }
@@ -848,59 +763,44 @@
       const data = pinkoSlots.map(slot => {
         const item = slot.firstChild;
         if (!item) return null;
-
         const img = item.querySelector('img');
-
         return {
           src: img ? img.src.split('/').pop() : null,
           sourceIndex: item.dataset.sourceIndex || null,
-          pinkoId:     Array.from(img.classList).find(c => c.startsWith('pinkoId-')) || null,
-          zIndex:      img?.style.zIndex || '',
+          pinkoId: Array.from(img.classList).find(c => c.startsWith('pinkoId-')) || null,
+          zIndex: img?.style.zIndex || '',
           domino:
             item.classList.contains('domino-0') ? 'domino-0' :
             item.classList.contains('domino-1') ? 'domino-1' :
             item.classList.contains('domino-2') ? 'domino-2' : null,
         };
       });
-
       localStorage.setItem('pinkoSlots', JSON.stringify(data));
     }
 
     function restoreSlots() {
       const data = JSON.parse(localStorage.getItem('pinkoSlots') || '[]');
-
       data.forEach((itemData, i) => {
         if (!itemData || !itemData.src) return;
-
         const slot = pinkoSlots[i];
-
         const sourceImg = document.createElement('img');
         sourceImg.src = itemData.src;
         sourceImg.dataset.sourceIndex = itemData.sourceIndex;
         sourceImg.className = 'card';
         sourceImg.decoding = 'sync';
-
-        if (itemData.pinkoId) {
-          sourceImg.classList.add(itemData.pinkoId);
-        }
-
+        if (itemData.pinkoId) sourceImg.classList.add(itemData.pinkoId);
         const wrapper = createPinkoItem(sourceImg);
-
         if (itemData.domino === 'domino-0') wrapper.classList.add('domino-0');
         if (itemData.domino === 'domino-1') wrapper.classList.add('domino-1');
         if (itemData.domino === 'domino-2') wrapper.classList.add('domino-2');
-
         slot.innerHTML = '';
         wrapper.style.setProperty('--card-mask', `url('${itemData.src}')`);
         slot.appendChild(wrapper);
-
-        // hide the matching card in the carousel by pinkoId
         if (itemData.pinkoId) {
           document.querySelectorAll('.' + itemData.pinkoId).forEach(card => {
             card.closest('.card-main')?.classList.add('hidden');
           });
         }
-
         const img = wrapper.querySelector('img');
         if (img) img.style.animationDelay = `${-(Math.random() * 13).toFixed(2)}s`;
       });
@@ -917,16 +817,16 @@
     const rows      = 5;
 
     const digits = [
-      [1,1,1, 1,0,1, 1,0,1, 1,0,1, 1,1,1], // 0
-      [0,1,0, 1,1,0, 0,1,0, 0,1,0, 1,1,1], // 1
-      [1,1,1, 0,0,1, 1,1,1, 1,0,0, 1,1,1], // 2
-      [1,1,1, 0,0,1, 0,1,1, 0,0,1, 1,1,1], // 3
-      [1,0,1, 1,0,1, 1,1,1, 0,0,1, 0,0,1], // 4
-      [1,1,1, 1,0,0, 1,1,1, 0,0,1, 1,1,1], // 5
-      [1,1,1, 1,0,0, 1,1,1, 1,0,1, 1,1,1], // 6
-      [1,1,1, 0,0,1, 0,0,1, 0,1,0, 0,1,0], // 7
-      [1,1,1, 1,0,1, 1,1,1, 1,0,1, 1,1,1], // 8
-      [1,1,1, 1,0,1, 1,1,1, 0,0,1, 1,1,1], // 9
+      [1,1,1, 1,0,1, 1,0,1, 1,0,1, 1,1,1],
+      [0,1,0, 1,1,0, 0,1,0, 0,1,0, 1,1,1],
+      [1,1,1, 0,0,1, 1,1,1, 1,0,0, 1,1,1],
+      [1,1,1, 0,0,1, 0,1,1, 0,0,1, 1,1,1],
+      [1,0,1, 1,0,1, 1,1,1, 0,0,1, 0,0,1],
+      [1,1,1, 1,0,0, 1,1,1, 0,0,1, 1,1,1],
+      [1,1,1, 1,0,0, 1,1,1, 1,0,1, 1,1,1],
+      [1,1,1, 0,0,1, 0,0,1, 0,1,0, 0,1,0],
+      [1,1,1, 1,0,1, 1,1,1, 1,0,1, 1,1,1],
+      [1,1,1, 1,0,1, 1,1,1, 0,0,1, 1,1,1],
     ];
 
     function makeGlyph(pixels, color, scale) {
@@ -934,31 +834,17 @@
       const g  = Math.ceil(gap * scale);
       const gw = cols * ps + (cols - 1) * g;
       const gh = rows * ps + (rows - 1) * g;
-
       let rects = '';
-
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           if (!pixels[r * cols + c]) continue;
-          const x = c * (ps + g);
-          const y = r * (ps + g);
-          rects += `<rect x="${x}" y="${y}" width="${ps}" height="${ps}" fill="${color}"/>`;
+          rects += `<rect x="${c*(ps+g)}" y="${r*(ps+g)}" width="${ps}" height="${ps}" fill="${color}"/>`;
         }
       }
-
-      return `
-        <svg
-          class="pixel-digit"
-          width="${gw}" height="${gh}"
-          viewBox="0 0 ${gw} ${gh}"
-          xmlns="http://www.w3.org/2000/svg"
-        >${rects}</svg>
-      `;
+      return `<svg class="pixel-digit" width="${gw}" height="${gh}" viewBox="0 0 ${gw} ${gh}" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
     }
 
-    function makeDigitSVG(d, color) {
-      return makeGlyph(digits[d], color, 1);
-    }
+    function makeDigitSVG(d, color) { return makeGlyph(digits[d], color, 1); }
 
     const interval = 60;
     const elMin    = document.getElementById('t-min');
@@ -970,14 +856,8 @@
       const color = flash ? '#E24B4A' : '#3CFFCF';
       const mins  = Math.floor(left / 60);
       const secs  = left % 60;
-
-      elMin.innerHTML =
-        makeDigitSVG(Math.floor(mins / 10), color) +
-        makeDigitSVG(mins % 10,             color);
-
-      elSec.innerHTML =
-        makeDigitSVG(Math.floor(secs / 10), color) +
-        makeDigitSVG(secs % 10,             color);
+      elMin.innerHTML = makeDigitSVG(Math.floor(mins / 10), color) + makeDigitSVG(mins % 10, color);
+      elSec.innerHTML = makeDigitSVG(Math.floor(secs / 10), color) + makeDigitSVG(secs % 10, color);
     }
 
     tick();
@@ -985,67 +865,47 @@
 
 
     /* ─────────────────────────────
-       SCHEDULED RELOAD
+       SCHEDULED RELOAD  (with curtain close)
     ───────────────────────────── */
 
     function scheduleReload() {
       const msUntilNextMinute = 60000 - (Date.now() % 60000);
       setTimeout(() => {
-        localStorage.removeItem('pinkoDex');
-        location.reload();
+        window.__curtainClose(() => {
+          localStorage.removeItem('pinkoDex');
+          location.reload();
+        });
       }, msUntilNextMinute);
     }
 
+
     /* ─────────────────────────────
-      VISIBLE CARD GLINT SYSTEM
+       VISIBLE CARD GLINT SYSTEM
     ───────────────────────────── */
 
     function initVisibleGlints() {
-
       const carousel = document.querySelector('.carousel');
-
-      const GLINT_SIZE = 7; // fixed number of cards (change this anytime)
+      const GLINT_SIZE = 7;
 
       function getCenterIndex(cards) {
         const rect = carousel.getBoundingClientRect();
-        let closestIndex = 0;
-        let closestDist = Infinity;
-
+        let closestIndex = 0, closestDist = Infinity;
         cards.forEach((card, i) => {
           const r = card.getBoundingClientRect();
-          const cardCenter = (r.left + r.right) / 2;
-          const carouselCenter = (rect.left + rect.right) / 2;
-          const dist = Math.abs(cardCenter - carouselCenter);
-
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestIndex = i;
-          }
+          const dist = Math.abs((r.left + r.right) / 2 - (rect.left + rect.right) / 2);
+          if (dist < closestDist) { closestDist = dist; closestIndex = i; }
         });
-
         return closestIndex;
       }
 
       function triggerBatchGlint() {
-
         const cards = Array.from(document.querySelectorAll('.card-main'));
         if (!cards.length) return;
-
         const centerIndex = getCenterIndex(cards);
-
         const half = Math.floor(GLINT_SIZE / 2);
-
-        const start = Math.max(0, centerIndex - half);
-        const end   = Math.min(cards.length, centerIndex + half + 1);
-
-        const batch = cards.slice(start, end);
-
-        // reset
+        const batch = cards.slice(Math.max(0, centerIndex - half), Math.min(cards.length, centerIndex + half + 1));
         batch.forEach(c => c.classList.remove('glint-active'));
-
         void document.body.offsetWidth;
-
-        // apply glint
         batch.forEach(c => c.classList.add('glint-active'));
       }
 
