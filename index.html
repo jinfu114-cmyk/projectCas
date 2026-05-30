@@ -374,24 +374,20 @@
       let animId = null;
 
       function resize() {
-        const dpr = window.devicePixelRatio || 1;
+  const dpr = window.devicePixelRatio || 1;
 
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-        // CSS size
-        canvas.style.width = w + "px";
-        canvas.style.height = h + "px";
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
 
-        // real pixel buffer
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
 
-        const ctx = canvas.getContext("2d");
-
-        // reset transform so we draw in CSS pixels
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
 
       function animate(direction, duration, onDone) {
         if (animId) cancelAnimationFrame(animId);
@@ -516,8 +512,12 @@
         resize();
 
         const ctx = canvas.getContext('2d');
+
+        const W = window.innerWidth;
+        const H = window.innerHeight;
+
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, W, H);
 
         setTimeout(() => {
           animate('open', 950, () => {
