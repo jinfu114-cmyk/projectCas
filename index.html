@@ -503,13 +503,27 @@
         animId = requestAnimationFrame(frame);
       }
 
-      // OPEN on page load — curtain lifts away
       window.addEventListener('load', () => {
         resize();
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        setTimeout(() => animate('open', 950), 100);
+
+        const criticalSrcs = [
+          'castelllogomain.png',
+          'castellborder.png',
+          'castellshirtcontainer.png',
+          'shirt-image.png',
+        ];
+
+        const imgPromises = criticalSrcs.map(src => {
+          const img = document.querySelector(`img[src="${src}"]`);
+          return img ? img.decode().catch(() => {}) : Promise.resolve();
+        });
+
+        Promise.all(imgPromises).then(() => {
+          setTimeout(() => animate('open', 950), 100);
+        });
       });
 
       // CLOSE on refresh / navigation — curtain drops, then reloads
