@@ -45,6 +45,10 @@
       image-rendering: pixelated;
     }
 
+    #loading-screen {
+      z-index: 99998;
+    }
+
     .logo-container {
       display: flex;
       justify-content: center;
@@ -314,6 +318,8 @@
 
 <body>
 
+  <div id="loading-screen"></div>
+
   <!-- PIXEL CURTAIN CANVAS -->
   <canvas id="pixel-curtain"></canvas>
 
@@ -505,11 +511,23 @@
 
       // OPEN on page load — curtain lifts away
       window.addEventListener('load', () => {
+        const overlay = document.getElementById('loading-screen');
+
         resize();
+
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        setTimeout(() => animate('open', 950), 100);
+
+        setTimeout(() => {
+          animate('open', 950, () => {
+            overlay.style.opacity = '0';
+
+            setTimeout(() => {
+              overlay.remove();
+            }, 300);
+          });
+        }, 100);
       });
 
       // CLOSE on refresh / navigation — curtain drops, then reloads
