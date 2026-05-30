@@ -45,10 +45,6 @@
       image-rendering: pixelated;
     }
 
-    #loading-screen {
-      z-index: 99998;
-    }
-
     .logo-container {
       display: flex;
       justify-content: center;
@@ -318,8 +314,6 @@
 
 <body>
 
-  <div id="loading-screen"></div>
-
   <!-- PIXEL CURTAIN CANVAS -->
   <canvas id="pixel-curtain"></canvas>
 
@@ -374,20 +368,24 @@
       let animId = null;
 
       function resize() {
-  const dpr = window.devicePixelRatio || 1;
+        const dpr = window.devicePixelRatio || 1;
 
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
 
-  canvas.style.width = w + "px";
-  canvas.style.height = h + "px";
+        // CSS size
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
 
-  canvas.width = Math.floor(w * dpr);
-  canvas.height = Math.floor(h * dpr);
+        // real pixel buffer
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
 
-  const ctx = canvas.getContext("2d");
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+        const ctx = canvas.getContext("2d");
+
+        // reset transform so we draw in CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
 
       function animate(direction, duration, onDone) {
         if (animId) cancelAnimationFrame(animId);
@@ -507,27 +505,11 @@
 
       // OPEN on page load — curtain lifts away
       window.addEventListener('load', () => {
-        const overlay = document.getElementById('loading-screen');
-
         resize();
-
         const ctx = canvas.getContext('2d');
-
-        const W = window.innerWidth;
-        const H = window.innerHeight;
-
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, W, H);
-
-        setTimeout(() => {
-          animate('open', 950, () => {
-            overlay.style.opacity = '0';
-
-            setTimeout(() => {
-              overlay.remove();
-            }, 300);
-          });
-        }, 100);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        setTimeout(() => animate('open', 950), 100);
       });
 
       // CLOSE on refresh / navigation — curtain drops, then reloads
