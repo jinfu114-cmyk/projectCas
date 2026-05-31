@@ -1013,27 +1013,5 @@
 
   </script>
 
-  <script>
-      (function () {
-        const DESIGN_WIDTH = 1000;
-        function applyZoom() {
-          const vw = window.innerWidth;
-          if (vw < DESIGN_WIDTH) {
-            const scale = vw / DESIGN_WIDTH;
-            document.body.style.transform = `scale(${scale})`;
-            document.body.style.transformOrigin = 'top center';
-            document.body.style.width = DESIGN_WIDTH + 'px';
-            document.body.style.marginLeft = `${(vw - DESIGN_WIDTH) / 2}px`;
-          } else {
-            document.body.style.transform = '';
-            document.body.style.transformOrigin = '';
-            document.body.style.width = '';
-            document.body.style.marginLeft = '';
-          }
-        }
-        applyZoom();
-        window.addEventListener('resize', applyZoom);
-      })();
-    </script>
 </body>
 </html>
