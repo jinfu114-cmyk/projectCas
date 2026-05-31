@@ -326,6 +326,32 @@
       animation: blink 1s step-start infinite;
     }
 
+    /* ── LAPTOP ZOOM-OUT ── */
+    @media screen and (max-width: 1440px) and (pointer: fine) {
+      body {
+        transform-origin: top center;
+        transform: scale(0.85);
+        width: calc(100% / 0.85);
+        margin-left: calc((100vw - 100vw / 0.85) / 2);
+      }
+    }
+
+    @media screen and (max-width: 1280px) and (pointer: fine) {
+      body {
+        transform: scale(0.75);
+        width: calc(100% / 0.75);
+        margin-left: calc((100vw - 100vw / 0.75) / 2);
+      }
+    }
+
+    @media screen and (max-width: 1024px) and (pointer: fine) {
+      body {
+        transform: scale(0.65);
+        width: calc(100% / 0.65);
+        margin-left: calc((100vw - 100vw / 0.65) / 2);
+      }
+    }
+
   </style>
 </head>
 
