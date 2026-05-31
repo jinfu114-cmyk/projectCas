@@ -1016,17 +1016,19 @@
   <script>
   (function () {
     function applyZoom() {
+      // Skip if touch device (mobile/tablet)
+      const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+      if (isTouch) return;
+
       const screenW = window.screen.width;
       const screenH = window.screen.height;
 
-      // Laptops: typically 1366–1920px wide with moderate height
-      // The page is designed for ~1000px max-width but assets are large
       let scale = 1;
 
       if (screenW <= 1440 && screenH <= 900) {
-        scale = 0.75; // small laptop (1366x768, 1280x800)
+        scale = 0.75;
       } else if (screenW <= 1920 && screenH <= 1080) {
-        scale = 0.85; // standard laptop (1920x1080, 1440x900)
+        scale = 0.85;
       }
 
       if (scale < 1) {
