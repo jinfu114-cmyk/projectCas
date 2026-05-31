@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="user-scalable=no">
-  
+
   <title>♛ 𝐂𝐀𝐒𝐓𝐄𝐋𝐋 - カ ス テ ル ♛</title>
   
   <style>
@@ -590,6 +590,7 @@
 
     function init() {
       initCarousel();
+      preloadPinkos();       // ← add here 
       setTimeout(restoreSlots, 150);
       initDragAndDrop();
       scheduleReload();
@@ -701,6 +702,14 @@
       const pinkoDexList = saved ? JSON.parse(saved) : generatePinkoDex(10);
       renderCards(pinkoDexList);
       cloneGroup();
+    }
+
+    function preloadPinkos() {
+      const saved = JSON.parse(localStorage.getItem('pinkoDex') || '[]');
+      saved.forEach(id => {
+        const img = new Image();
+        img.src = `pinko-${id}.png`;
+      });
     }
 
     function generatePinkoDex(amount) {
