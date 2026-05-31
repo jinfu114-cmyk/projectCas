@@ -333,20 +333,6 @@
 
   <div id="loading-screen"></div>
 
-  <script>
-    (function () {
-      const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-      if (!isTouch) {
-        const screenW = window.screen.width;
-        const screenH = window.screen.height;
-        let scale = 1;
-        if (screenW <= 1440 && screenH <= 900) scale = 0.75;
-        else if (screenW <= 1920 && screenH <= 1080) scale = 0.85;
-        if (scale < 1) document.body.style.zoom = scale;
-      }
-    })();
-  </script>
-  
   <!-- PIXEL CURTAIN CANVAS -->
   <canvas id="pixel-curtain"></canvas>
 
@@ -401,21 +387,20 @@
       let animId = null;
 
       function resize() {
-        const dpr = window.devicePixelRatio || 1;
-        const zoom = parseFloat(document.body.style.zoom) || 1;
+  const dpr = window.devicePixelRatio || 1;
 
-        const w = window.innerWidth / zoom;
-        const h = window.innerHeight / zoom;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-        canvas.style.width = w + "px";
-        canvas.style.height = h + "px";
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
 
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
 
-        const ctx = canvas.getContext("2d");
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
 
       function animate(direction, duration, onDone) {
         if (animId) cancelAnimationFrame(animId);
@@ -425,9 +410,8 @@
         const ctx = canvas.getContext("2d");
 
         // IMPORTANT: use CSS pixels, NOT canvas.width
-        const zoom = parseFloat(document.body.style.zoom) || 1;
-        const W = window.innerWidth / zoom;
-        const H = window.innerHeight / zoom;
+        const W = window.innerWidth;
+        const H = window.innerHeight;
 
         const cols = Math.ceil(W / SZ);
         const rows = Math.ceil(H / SZ);
@@ -524,7 +508,7 @@
               ctx.fillStyle = "#ffffff";
               ctx.fillRect(0, 0, W, H);
             } else {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.clearRect(0, 0, W, H);
             }
 
             onDone && onDone();
@@ -542,9 +526,8 @@
 
         const ctx = canvas.getContext('2d');
 
-        const zoom = parseFloat(document.body.style.zoom) || 1;
-        const W = window.innerWidth / zoom;
-        const H = window.innerHeight / zoom;
+        const W = window.innerWidth;
+        const H = window.innerHeight;
 
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, W, H);
@@ -1029,33 +1012,5 @@
     }
 
   </script>
-
-   <script>
-  (function () {
-    function applyZoom() {
-      // Skip if touch device (mobile/tablet)
-      const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-      if (isTouch) return;
-
-      const screenW = window.screen.width;
-      const screenH = window.screen.height;
-
-      let scale = 1;
-
-      if (screenW <= 1440 && screenH <= 900) {
-        scale = 0.75;
-      } else if (screenW <= 1920 && screenH <= 1080) {
-        scale = 0.85;
-      }
-
-      if (scale < 1) {
-        document.body.style.zoom = scale;
-      }
-    }
-
-    applyZoom();
-    window.addEventListener('resize', applyZoom);
-  })();
-</script>
 </body>
 </html>
