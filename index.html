@@ -333,6 +333,20 @@
 
   <div id="loading-screen"></div>
 
+  <script>
+    (function () {
+      const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+      if (!isTouch) {
+        const screenW = window.screen.width;
+        const screenH = window.screen.height;
+        let scale = 1;
+        if (screenW <= 1440 && screenH <= 900) scale = 0.75;
+        else if (screenW <= 1920 && screenH <= 1080) scale = 0.85;
+        if (scale < 1) document.body.style.zoom = scale;
+      }
+    })();
+  </script>
+  
   <!-- PIXEL CURTAIN CANVAS -->
   <canvas id="pixel-curtain"></canvas>
 
@@ -528,8 +542,9 @@
 
         const ctx = canvas.getContext('2d');
 
-        const W = window.innerWidth;
-        const H = window.innerHeight;
+        const zoom = parseFloat(document.body.style.zoom) || 1;
+        const W = window.innerWidth / zoom;
+        const H = window.innerHeight / zoom;
 
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, W, H);
