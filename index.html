@@ -1012,5 +1012,20 @@
     }
 
   </script>
+
+   <script>         
+      (function() {
+        function applyZoom() {
+          const w = window.screen.width;
+          const dpr = window.devicePixelRatio || 1;
+          const physicalW = w * dpr;
+          if (w <= 1600 && physicalW <= 2560) {
+            const scale = Math.min(1, w / 1200);
+            document.body.style.zoom = scale;
+          }
+        }
+        applyZoom();
+      })();
+    </script>
 </body>
 </html>
