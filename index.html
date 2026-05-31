@@ -652,13 +652,16 @@
 
     function initZoom() {
       if (!window.matchMedia('(pointer: fine)').matches) return;
-      let zoom = 1;
+      let zoom = parseFloat(localStorage.getItem('pageZoom')) || 1;
+      document.body.style.zoom = zoom;
+
       document.addEventListener('wheel', (e) => {
         if (!e.ctrlKey) return;
         e.preventDefault();
         const delta = e.deltaY > 0 ? -0.05 : 0.05;
         zoom = Math.max(0.5, Math.min(3, zoom + delta));
         document.body.style.zoom = zoom;
+        localStorage.setItem('pageZoom', zoom);
       }, { passive: false });
     }
 
