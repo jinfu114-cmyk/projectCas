@@ -757,7 +757,7 @@
       if (isDragging) return;
       const card = event.target;
       if (!card.classList.contains('card')) return;
-      navigator.vibrate?.(10);
+      navigator.vibrate?.(15);
       isDragging = true;
       document.body.classList.add('is-dragging');
       const parentCard = card.parentNode;
@@ -848,7 +848,7 @@
 
     function handlePinkoItemClick(event) {
       event.stopPropagation();
-      navigator.vibrate?.(10);
+      navigator.vibrate?.(15);
       const item = event.currentTarget;
       const img = item.querySelector('img');
       const pinkoIdClass = Array.from(img.classList).find(c => c.startsWith('pinkoId-'));
