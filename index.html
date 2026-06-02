@@ -748,7 +748,6 @@
     ───────────────────────────── */
 
     function initDragAndDrop() {
-      document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
       document.addEventListener('pointerdown', handleMouseDown, { passive: false });
       document.addEventListener('pointermove', handleMouseMove, { passive: false });
       document.addEventListener('pointerup',   handleMouseUp,   { passive: false });
