@@ -751,6 +751,10 @@
       document.addEventListener('pointerdown', handleMouseDown, { passive: false });
       document.addEventListener('pointermove', handleMouseMove, { passive: false });
       document.addEventListener('pointerup',   handleMouseUp,   { passive: false });
+
+      document.addEventListener('gesturestart', e => e.preventDefault());
+      document.addEventListener('gesturechange', e => e.preventDefault());
+      document.addEventListener('gestureend', e => e.preventDefault());
     }
 
     function handleMouseDown(event) {
