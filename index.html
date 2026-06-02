@@ -32,6 +32,14 @@
       width: 100%;
       margin: 0 auto;
       overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      
+    }
+
+    .page {
+      flex: 1;
     }
 
     /* ── PIXEL CURTAIN ── */
@@ -347,57 +355,81 @@
         transform: translateY(0);
       }
     }
+
+    .site-footer {
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+
+      text-align: center;
+      font-size: 15px;
+      padding: 10px 10px;
+
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(6px);
+
+      letter-spacing: 1px;
+      font-family: monospace;
+    }
   </style>
 </head>
 
 <body>
-
-  <div class="device-warning">
-    Mobile or desktop recommended. The screen display will be larger on laptops. モバイルまたはデスクトップ推奨。ノートPCでは画面表示が大きくなります。
-  </div>
-
-  <div id="loading-screen"></div>
-
-  <!-- PIXEL CURTAIN CANVAS -->
-  <canvas id="pixel-curtain"></canvas>
-
-  <div class="logo-container">
-    <img class="logo" draggable="false" src="castelllogomain.png">
-  </div>
-
-  <div class="carousel">
-    <div class="group"></div>
-  </div>
-
-  <div class="castell-border">
-    <img class="castell-border-image" src="castellborder.png">
-    <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
-      <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
-      <div style="display:flex; gap:3px;" id="online-label"></div>
+  <div class="page">
+    <div class="device-warning">
+      Mobile or desktop recommended. The screen display will be larger on laptops. モバイルまたはデスクトップ推奨。ノートPCでは画面表示が大きくなります。
     </div>
-    <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
-      <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
+
+    <div id="loading-screen"></div>
+
+    <!-- PIXEL CURTAIN CANVAS -->
+    <canvas id="pixel-curtain"></canvas>
+
+    <div class="logo-container">
+      <img class="logo" draggable="false" src="castelllogomain.png">
     </div>
-    <div class="timer-wrap">
-      <div class="timer-boxes">
-        <div class="timer-display" id="t-min"></div>
-        <div class="timer-display" id="t-sec"></div>
+
+    <div class="carousel">
+      <div class="group"></div>
+    </div>
+
+    <div class="castell-border">
+      <img class="castell-border-image" src="castellborder.png">
+      <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
+        <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
+        <div style="display:flex; gap:3px;" id="online-label"></div>
+      </div>
+      <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
+        <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
+      </div>
+      <div class="timer-wrap">
+        <div class="timer-boxes">
+          <div class="timer-display" id="t-min"></div>
+          <div class="timer-display" id="t-sec"></div>
+        </div>
       </div>
     </div>
+
+    <div class="shirt-container">
+      <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
+      <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
+      <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
+    </div>
+
+    <div class="castell-shirt-container">
+      <div style="position:absolute; top:79px; left:50%; transform:translateX(-50%); display:flex; gap:3px; z-index:10;" id="battle-label"></div>
+      <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
+      <img class="castell-shirt" src="shirt-image.png">
+    </div>
   </div>
 
-  <div class="shirt-container">
-    <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
-    <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
-    <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
-  </div>
-
-  <div class="castell-shirt-container">
-    <div style="position:absolute; top:79px; left:50%; transform:translateX(-50%); display:flex; gap:3px; z-index:10;" id="battle-label"></div>
-    <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
-    <img class="castell-shirt" src="shirt-image.png">
-  </div>
-
+  <footer class="site-footer">
+    © 2026 The Castell Company. All rights reserved.
+  </footer>
 
   <script>
 
@@ -412,20 +444,20 @@
       let animId = null;
 
       function resize() {
-  const dpr = window.devicePixelRatio || 1;
+        const dpr = window.devicePixelRatio || 1;
 
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
 
-  canvas.style.width = w + "px";
-  canvas.style.height = h + "px";
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
 
-  canvas.width = Math.floor(w * dpr);
-  canvas.height = Math.floor(h * dpr);
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
 
-  const ctx = canvas.getContext("2d");
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
 
       function animate(direction, duration, onDone) {
         if (animId) cancelAnimationFrame(animId);
@@ -1046,5 +1078,6 @@
     }
 
   </script>
+
 </body>
 </html>
