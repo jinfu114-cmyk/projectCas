@@ -1050,7 +1050,6 @@
       const GLINT_SIZE = 7;
 
       function getCenterIndex(cards) {
-        // Reading rects inside rAF so layout is already settled
         const rect = carousel.getBoundingClientRect();
         let closestIndex = 0, closestDist = Infinity;
         cards.forEach((card, i) => {
@@ -1062,22 +1061,14 @@
       }
 
       function triggerBatchGlint() {
-        // FIX 4: defer the layout read to the next paint frame
-        requestAnimationFrame(() => {
-          // FIX 1: only glint cards in the ORIGINAL group — the clone
-          // is a visual duplicate and doesn't need its own glint pass
-          const cards = Array.from(groupElement.querySelectorAll('.card-main'));
-          if (!cards.length) return;
-          const centerIndex = getCenterIndex(cards);
-          const half = Math.floor(GLINT_SIZE / 2);
-          const batch = cards.slice(
-            Math.max(0, centerIndex - half),
-            Math.min(cards.length, centerIndex + half + 1)
-          );
-          batch.forEach(c => c.classList.remove('glint-active'));
-          void document.body.offsetWidth; // force reflow to restart CSS animation
-          batch.forEach(c => c.classList.add('glint-active'));
-        });
+        const cards = Array.from(document.querySelectorAll('.card-main'));
+        if (!cards.length) return;
+        const centerIndex = getCenterIndex(cards);
+        const half = Math.floor(GLINT_SIZE / 2);
+        const batch = cards.slice(Math.max(0, centerIndex - half), Math.min(cards.length, centerIndex + half + 1));
+        batch.forEach(c => c.classList.remove('glint-active'));
+        void document.body.offsetWidth;
+        batch.forEach(c => c.classList.add('glint-active'));
       }
 
       triggerBatchGlint();
