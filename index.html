@@ -14,18 +14,10 @@
       -webkit-user-select: none;
       -ms-user-select: none;
       -webkit-tap-highlight-color: transparent;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE/Edge */
-    }
-
-    *::-webkit-scrollbar {
-      display: none; /* Chrome/Safari/Opera */
     }
 
     html, body {
       overscroll-behavior: none;
-      overflow-x: hidden;
-      max-width: 100%;
     }
 
     img {
@@ -40,15 +32,6 @@
       width: 100%;
       margin: 0 auto;
       overflow-x: hidden;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      touch-action: pan-y;
-      
-    }
-
-    .page {
-      flex: 1;
     }
 
     /* ── PIXEL CURTAIN ── */
@@ -77,7 +60,7 @@
     .logo {
       width: 737px;
       max-width: 780px;
-      padding: 85px 0 21px;
+      padding: 90px 0 21px;
       display: block;
       z-index: 20;
     }
@@ -131,6 +114,7 @@
       transform: translateZ(0);
       flex-shrink: 0;
 
+    
     }
 
     .card-main {
@@ -364,76 +348,57 @@
         transform: translateY(0);
       }
     }
-
-    .site-footer {
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100vw;
-      text-align: center;
-      font-size: 15px;
-      padding: 10px;
-      color: #ffffff;
-      background: rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(6px);
-      letter-spacing: 1px;
-      font-family: monospace;
-    }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="device-warning">
-      Mobile or desktop recommended. The screen display will be larger on laptops. モバイルまたはデスクトップ推奨。ノートPCでは画面表示が大きくなります。
+
+  <div class="device-warning">
+    Mobile or desktop recommended. Laptop view may appear zoomed in. モバイルまたはデスクトップ推奨。ノートPCでは拡大表示される場合があります。
+  </div>
+
+  <div id="loading-screen"></div>
+
+  <!-- PIXEL CURTAIN CANVAS -->
+  <canvas id="pixel-curtain"></canvas>
+
+  <div class="logo-container">
+    <img class="logo" draggable="false" src="castelllogomain.png">
+  </div>
+
+  <div class="carousel">
+    <div class="group"></div>
+  </div>
+
+  <div class="castell-border">
+    <img class="castell-border-image" src="castellborder.png">
+    <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
+      <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
+      <div style="display:flex; gap:3px;" id="online-label"></div>
     </div>
-
-    <div id="loading-screen"></div>
-
-    <!-- PIXEL CURTAIN CANVAS -->
-    <canvas id="pixel-curtain"></canvas>
-
-    <div class="logo-container">
-      <img class="logo" draggable="false" src="castelllogomain.png">
+    <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
+      <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
     </div>
-
-    <div class="carousel">
-      <div class="group"></div>
-    </div>
-
-    <div class="castell-border">
-      <img class="castell-border-image" src="castellborder.png">
-      <div style="position:absolute; top:17%; right:10.5%; display:flex; align-items:center; gap:8px; z-index:10;">
-        <div id="online-dot" class="blink" style="display:flex; align-items:center;"></div>
-        <div style="display:flex; gap:3px;" id="online-label"></div>
+    <div class="timer-wrap">
+      <div class="timer-boxes">
+        <div class="timer-display" id="t-min"></div>
+        <div class="timer-display" id="t-sec"></div>
       </div>
-      <div style="position:absolute; top:17%; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:3px; z-index:10;">
-        <div style="display:flex; gap:3px;" id="pinko-machine-label"></div>
-      </div>
-      <div class="timer-wrap">
-        <div class="timer-boxes">
-          <div class="timer-display" id="t-min"></div>
-          <div class="timer-display" id="t-sec"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="shirt-container">
-      <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
-      <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
-      <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
-    </div>
-
-    <div class="castell-shirt-container">
-      <div style="position:absolute; top:79px; left:50%; transform:translateX(-50%); display:flex; gap:3px; z-index:10;" id="battle-label"></div>
-      <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
-      <img class="castell-shirt" src="shirt-image.png">
     </div>
   </div>
 
-  <footer class="site-footer">
-    © 2026 The Castell Company. All rights reserved.
-  </footer>
+  <div class="shirt-container">
+    <div class="shirt-pinko-placement  shirt-pinko-placement-width"></div>
+    <div class="shirt-pinko-placement1 shirt-pinko-placement-width1"></div>
+    <div class="shirt-pinko-placement2 shirt-pinko-placement-width2"></div>
+  </div>
+
+  <div class="castell-shirt-container">
+    <div style="position:absolute; top:79px; left:50%; transform:translateX(-50%); display:flex; gap:3px; z-index:10;" id="battle-label"></div>
+    <img class="castell-shirt-container-image" src="castellshirtcontainer.png">
+    <img class="castell-shirt" src="shirt-image.png">
+  </div>
+
 
   <script>
 
@@ -448,20 +413,20 @@
       let animId = null;
 
       function resize() {
-        const dpr = window.devicePixelRatio || 1;
+  const dpr = window.devicePixelRatio || 1;
 
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-        canvas.style.width = w + "px";
-        canvas.style.height = h + "px";
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
 
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
+  canvas.width = Math.floor(w * dpr);
+  canvas.height = Math.floor(h * dpr);
 
-        const ctx = canvas.getContext("2d");
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
 
       function animate(direction, duration, onDone) {
         if (animId) cancelAnimationFrame(animId);
@@ -626,7 +591,7 @@
 
     function init() {
       initCarousel();
-      preloadPinkos();       // ← add here 
+      preloadPinkos(); 
       setTimeout(restoreSlots, 150);
       initDragAndDrop();
       scheduleReload();
@@ -793,7 +758,7 @@
       if (isDragging) return;
       const card = event.target;
       if (!card.classList.contains('card')) return;
-      navigator.vibrate?.(15);
+      navigator.vibrate?.(10);
       isDragging = true;
       document.body.classList.add('is-dragging');
       const parentCard = card.parentNode;
@@ -884,7 +849,7 @@
 
     function handlePinkoItemClick(event) {
       event.stopPropagation();
-      navigator.vibrate?.(15);
+      navigator.vibrate?.(10);
       const item = event.currentTarget;
       const img = item.querySelector('img');
       const pinkoIdClass = Array.from(img.classList).find(c => c.startsWith('pinkoId-'));
@@ -1082,6 +1047,5 @@
     }
 
   </script>
-
 </body>
 </html>
