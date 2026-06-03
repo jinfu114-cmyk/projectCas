@@ -41,13 +41,11 @@
       left: 0;
       width: 100%;
       height: 100%;
-      /* FIX 8: block pointer events during curtain open/close */
       pointer-events: none;
       z-index: 99999;
       image-rendering: pixelated;
     }
 
-    /* FIX 8: class toggled onto curtain canvas while animating */
     #pixel-curtain.is-animating {
       pointer-events: all;
     }
@@ -136,7 +134,6 @@
       z-index: 2;
       -webkit-mask-image: var(--card-mask);
       mask-image: var(--card-mask);
-      /* FIX 6: use 'contain' instead of a fixed px value so it scales correctly */
       -webkit-mask-size: contain;
       mask-size: 208px;
       -webkit-mask-repeat: no-repeat;
@@ -220,6 +217,7 @@
     .pinko-item:hover img {
       filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 3px #ffffff);
     }
+
 
     .shirt-pinko-placement-width,
     .shirt-pinko-placement-width1,
@@ -447,7 +445,6 @@
 
         resize();
 
-        // FIX 8: block all pointer events while curtain is animating
         canvas.classList.add('is-animating');
 
         const ctx = canvas.getContext('2d');
@@ -515,7 +512,6 @@
               ctx.fillRect(0, 0, W, H);
             } else {
               ctx.clearRect(0, 0, W, H);
-              // FIX 8: restore pointer events once curtain has fully opened
               canvas.classList.remove('is-animating');
             }
 
@@ -649,10 +645,16 @@
        GLOBAL STATE
     ───────────────────────────── */
 
-    let isDragging = false;
-    let dragImg    = null;
+    let isDragging  = false;
+    let dragImg     = null;
 
-    // FIX 1: reference the original group only; the clone is built separately
+    /*
+     * dragSource describes WHERE the drag originated:
+     *   { type: 'card', index }          — from the carousel
+     *   { type: 'slot', slotIndex, item } — from a shirt slot
+     */
+    let dragSource  = null;
+
     const groupElement = document.getElementById('group-original');
 
     const pinkoSlots = [
@@ -668,7 +670,6 @@
 
     function initCarousel() {
       const saved = localStorage.getItem('pinkoDex');
-      // FIX 7: use Fisher-Yates shuffle instead of rejection-sampling while loop
       const pinkoDexList = saved ? JSON.parse(saved) : generatePinkoDex(10);
       renderCards(pinkoDexList);
       cloneGroup();
@@ -682,7 +683,6 @@
       });
     }
 
-    // FIX 7: Fisher-Yates shuffle — O(n), no infinite-loop risk, guaranteed unique
     function generatePinkoDex(amount) {
       const pool = Array.from({ length: 10 }, (_, i) => i + 1);
       for (let i = pool.length - 1; i > 0; i--) {
@@ -707,9 +707,6 @@
       }).join('');
     }
 
-    // FIX 1: clone only the inner HTML so the clone is an independent DOM subtree
-    // with no shared references, and give it a distinct id so glint queries
-    // can filter it out cleanly.
     function cloneGroup() {
       const carousel   = document.querySelector('.carousel');
       const cloneEl    = document.createElement('div');
@@ -733,24 +730,49 @@
     function handleMouseDown(event) {
       event.preventDefault();
       if (isDragging) return;
+
+      /* ── Case A: dragging a placed pinko from a slot ── */
+      const pinkoItem = event.target.closest('.pinko-item');
+      if (pinkoItem) {
+        const slotIndex = pinkoSlots.findIndex(s => s.contains(pinkoItem));
+        if (slotIndex === -1) return;
+
+        navigator.vibrate?.(30);
+        isDragging = true;
+        document.body.classList.add('is-dragging');
+
+
+        dragSource = { type: 'slot', slotIndex, item: pinkoItem };
+
+        // Build ghost from the placed item's img
+        const sourceImg = pinkoItem.querySelector('img');
+        dragImg = sourceImg.cloneNode(true);
+        dragImg.style.cssText = 'position:absolute;pointer-events:none;z-index:1000;image-rendering:auto;width:125px;height:130px;object-fit:contain;';
+        document.body.appendChild(dragImg);
+
+        // Hide the item in its slot (keep slot empty-looking while dragging)
+        pinkoItem.style.opacity = '0';
+        moveAt(event.pageX, event.pageY);
+        return;
+      }
+
+      /* ── Case B: dragging a card from the carousel ── */
       const card = event.target;
       if (!card.classList.contains('card')) return;
+
       navigator.vibrate?.(30);
       isDragging = true;
       document.body.classList.add('is-dragging');
 
-      // FIX 1: resolve the index against the ORIGINAL group only
       const parentCard  = card.closest('.card-main');
       const parentGroup = parentCard.parentNode;
-
-      // If the user happens to grab from the clone, we still want the original index
-      const isClone = parentGroup.id === 'group-clone';
+      const isClone     = parentGroup.id === 'group-clone';
       const sourceGroup = isClone ? groupElement : parentGroup;
-      const sourceCard  = isClone
-        ? sourceGroup.children[Array.from(parentGroup.children).indexOf(parentCard)]
-        : parentCard;
+      const index       = isClone
+        ? Array.from(parentGroup.children).indexOf(parentCard)
+        : Array.from(sourceGroup.children).indexOf(parentCard);
 
-      const index = Array.from(sourceGroup.children).indexOf(isClone ? sourceCard : parentCard);
+      dragSource = { type: 'card', index };
 
       dragImg = card.cloneNode(true);
       dragImg.dataset.sourceIndex = index;
@@ -770,10 +792,73 @@
 
     function handleMouseUp(event) {
       event.preventDefault();
-      if (!dragImg) return;
+      if (!dragImg || !dragSource) return;
+
       const targetSlot = getTargetSlot(event.clientX, event.clientY);
-      const index = dragImg.dataset.sourceIndex;
-      if (!targetSlot) { toggleCardVisibility(index, false); cleanupDrag(); return; }
+
+      /* ── Slot → slot drag ── */
+      if (dragSource.type === 'slot') {
+        const { slotIndex, item } = dragSource;
+        const sourceSlot = pinkoSlots[slotIndex];
+
+        if (targetSlot === sourceSlot) {
+          // Dropped back on same slot — return item unchanged
+          item.style.opacity = '';
+          cleanupDrag();
+          return;
+        }
+
+        if (!targetSlot) {
+          // Dropped outside — same logic as original click-to-remove
+          const img = item.querySelector('img');
+          const pinkoIdClass = img ? Array.from(img.classList).find(c => c.startsWith('pinkoId-')) : null;
+          if (pinkoIdClass) {
+            groupElement.querySelectorAll('.' + pinkoIdClass).forEach(card => {
+              card.closest('.card-main')?.classList.remove('hidden');
+            });
+            syncCloneVisibility();
+          }
+          item.remove();
+          saveSlots();
+          cleanupDrag();
+          return;
+        }
+
+        const targetIndex = pinkoSlots.indexOf(targetSlot);
+        const existingItem = targetSlot.firstChild;
+
+        if (existingItem) {
+          // Swap: move the target's current pinko back to the source slot
+          sourceSlot.innerHTML = '';
+          existingItem.style.opacity = '';
+          // Re-apply correct domino class for the source slot position
+          removeDominoClasses(existingItem);
+          applyDominoClass(sourceSlot, existingItem);
+          sourceSlot.appendChild(existingItem);
+        } else {
+          sourceSlot.innerHTML = '';
+        }
+
+        // Place dragged item into target slot
+        item.style.opacity = '';
+        removeDominoClasses(item);
+        applyDominoClass(targetSlot, item);
+        targetSlot.appendChild(item);
+
+        saveSlots();
+        cleanupDrag();
+        return;
+      }
+
+      /* ── Card → slot drag (original logic, kept intact) ── */
+      const index = dragSource.index;
+
+      if (!targetSlot) {
+        toggleCardVisibility(index, false);
+        cleanupDrag();
+        return;
+      }
+
       placePinko(targetSlot);
       toggleCardVisibility(index, true);
       cleanupDrag();
@@ -805,20 +890,30 @@
       const img = existingItem.querySelector('img');
       const pinkoIdClass = img ? Array.from(img.classList).find(c => c.startsWith('pinkoId-')) : null;
       if (pinkoIdClass) {
-        // FIX 1: only unhide cards in the ORIGINAL group, not the clone
         groupElement.querySelectorAll('.' + pinkoIdClass).forEach(card => {
           card.closest('.card-main')?.classList.remove('hidden');
         });
-        // Mirror the visibility to the clone too
         syncCloneVisibility();
       }
       existingItem.remove();
+    }
+
+    function removeDominoClasses(el) {
+      el.classList.remove('domino-0', 'domino-1', 'domino-2');
     }
 
     function applyDominoClass(slot, item) {
       if      (slot.classList.contains('shirt-pinko-placement'))  item.classList.add('domino-0');
       else if (slot.classList.contains('shirt-pinko-placement1')) item.classList.add('domino-1');
       else if (slot.classList.contains('shirt-pinko-placement2')) item.classList.add('domino-2');
+      // Force animation restart so dominoPulse plays on newly placed/swapped items
+      const img = item.querySelector('img');
+      if (img) {
+        img.style.animation = 'none';
+        void img.offsetWidth;
+        img.style.animation = '';
+        img.style.animationDelay = `-${(Math.random() * 13).toFixed(2)}s`;
+      }
     }
 
     function createPinkoItem(sourceImg) {
@@ -835,29 +930,10 @@
       wrapper.className = 'pinko-item';
       wrapper.dataset.sourceIndex = sourceImg.dataset.sourceIndex;
       wrapper.appendChild(finalImg);
-      wrapper.addEventListener('pointerdown', handlePinkoItemClick);
+      // NOTE: no click handler — dragging is the only interaction now
       return wrapper;
     }
 
-    function handlePinkoItemClick(event) {
-      event.stopPropagation();
-      navigator.vibrate?.(30);
-      const item = event.currentTarget;
-      const img = item.querySelector('img');
-      const pinkoIdClass = Array.from(img.classList).find(c => c.startsWith('pinkoId-'));
-      if (pinkoIdClass) {
-        // FIX 1: unhide in original group, then sync clone
-        groupElement.querySelectorAll('.' + pinkoIdClass).forEach(card => {
-          card.closest('.card-main')?.classList.remove('hidden');
-        });
-        syncCloneVisibility();
-      }
-      item.remove();
-      saveSlots();
-    }
-
-    // FIX 1: keep clone hidden-state in sync with the original group
-    // instead of querying document.querySelectorAll which hits both groups
     function syncCloneVisibility() {
       const cloneEl = document.getElementById('group-clone');
       if (!cloneEl) return;
@@ -884,7 +960,6 @@
       dragImg.style.top  = y - dragImg.offsetHeight / 2 + 'px';
     }
 
-    // FIX 1: toggle visibility on BOTH groups in sync
     function toggleCardVisibility(index, hide) {
       [groupElement, document.getElementById('group-clone')].forEach(group => {
         if (!group) return;
@@ -895,10 +970,12 @@
     }
 
     function cleanupDrag() {
-      dragImg.remove();
-      dragImg = null;
+      if (dragImg) dragImg.remove();
+      dragImg   = null;
+      dragSource = null;
       isDragging = false;
       document.body.classList.remove('is-dragging');
+
     }
 
 
@@ -911,7 +988,6 @@
         const item = slot.firstChild;
         if (!item) return null;
         const img = item.querySelector('img');
-        // FIX 3: extract filename from src safely, stripping query strings
         const rawSrc = img ? img.src : null;
         const filename = rawSrc
           ? rawSrc.split('/').pop().split('?')[0]
@@ -949,14 +1025,11 @@
         wrapper.style.setProperty('--card-mask', `url('${itemData.src}')`);
         slot.appendChild(wrapper);
         if (itemData.pinkoId) {
-          // FIX 1 + FIX 5: hide in original group then sync clone
           groupElement.querySelectorAll('.' + itemData.pinkoId).forEach(card => {
             card.closest('.card-main')?.classList.add('hidden');
           });
           syncCloneVisibility();
         }
-        // FIX 5: use a deterministic per-slot delay instead of Math.random()
-        // so restored pinkos start at a consistent point in the pulse cycle
         const img = wrapper.querySelector('img');
         if (img) {
           img.style.animationDelay = `-${(Math.random() * 13).toFixed(2)}s`;
@@ -1023,9 +1096,7 @@
 
 
     /* ─────────────────────────────
-       SCHEDULED RELOAD  (with curtain close)
-       FIX 2: single setTimeout anchored to wall-clock remainder;
-       no compounding drift from nested setTimeout + setInterval
+       SCHEDULED RELOAD
     ───────────────────────────── */
 
     function scheduleReload() {
@@ -1041,8 +1112,6 @@
 
     /* ─────────────────────────────
        VISIBLE CARD GLINT SYSTEM
-       FIX 4: wrap getBoundingClientRect in requestAnimationFrame
-       to avoid forced synchronous reflow
     ───────────────────────────── */
 
     function initVisibleGlints() {
