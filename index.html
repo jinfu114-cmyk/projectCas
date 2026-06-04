@@ -917,20 +917,24 @@
     }
 
     function createPinkoItem(sourceImg) {
-      const finalImg = sourceImg.cloneNode(true);
+      const finalImg = new Image();
+      finalImg.src = sourceImg.src;
+      finalImg.className = sourceImg.className;
       finalImg.style.position = 'static';
       finalImg.style.imageRendering = 'auto';
       finalImg.classList.remove('rotation-left');
       finalImg.draggable = false;
       finalImg.setAttribute('draggable', 'false');
       finalImg.decoding = 'sync';
-      const pinkoIdClass = Array.from(sourceImg.classList).find(c => c.startsWith('pinkoId-'));
-      if (pinkoIdClass) finalImg.classList.add(pinkoIdClass);
+      const pinkoIdClass = Array.from(sourceImg.classList)
+        .find(c => c.startsWith('pinkoId-'));
+      if (pinkoIdClass) {
+        finalImg.classList.add(pinkoIdClass);
+      }
       const wrapper = document.createElement('div');
       wrapper.className = 'pinko-item';
       wrapper.dataset.sourceIndex = sourceImg.dataset.sourceIndex;
       wrapper.appendChild(finalImg);
-      // NOTE: no click handler — dragging is the only interaction now
       return wrapper;
     }
 
