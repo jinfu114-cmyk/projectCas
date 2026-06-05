@@ -550,9 +550,12 @@
 
         setTimeout(() => {
           animate('open', 950, () => {
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.remove(); }, 300);
-          });
+          overlay.style.opacity = '0';
+          soundReady = true;
+          setTimeout(() => {
+            overlay.remove();
+          }, 300);
+        });
         }, 500);
       });
 
@@ -663,6 +666,7 @@
 
     let isDragging  = false;
     let dragImg     = null;
+    let soundReady = false;
 
     /*
      * dragSource describes WHERE the drag originated:
@@ -1264,7 +1268,8 @@
       }, 120);
 
       document.addEventListener('pointerover', function(e) {
-        if (!ready || isDown) return;
+        if (!soundReady || !ready || isDown) return;
+
         if (e.target.classList.contains('card')) {
           throttledChime(e.target);
         }
