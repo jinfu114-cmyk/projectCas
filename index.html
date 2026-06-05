@@ -1165,7 +1165,7 @@
     }
   
     /* ─────────────────────────────
-       HOVER SOUND EFFECTS
+      HOVER SOUND EFFECTS
     ───────────────────────────── */
 
     (function() {
@@ -1177,23 +1177,8 @@
         setTimeout(() => { ready = true; }, 1500);
       });
 
-      const quackSound = new Audio('quack.mp3');
-      quackSound.volume = 0.05;
-
-      function playQuack() {
-        quackSound.currentTime = 0;
-        quackSound.play();
-      }
-
-      document.addEventListener('pointerdown', (e) => {
-        isDown = true;
-        if (!ready) return;
-        if (e.target.classList.contains('card') || e.target.closest('.pinko-item')) {
-          playQuack();
-        }
-      });
-
-      document.addEventListener('pointerup', () => { isDown = false; });
+      document.addEventListener('pointerdown', () => { isDown = true; });
+      document.addEventListener('pointerup',   () => { isDown = false; });
 
       function getCtx() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
