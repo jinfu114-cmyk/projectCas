@@ -1170,24 +1170,28 @@
 
     (function() {
       let audioCtx = null;
-      let ready = false;
+      let ready = true;
       let isDown = false;
 
-      ready = true;  // gesture-unlock is the real gate, not a timer
-
-      document.addEventListener('pointerdown', () => {
-        isDown = true;
+      function unlockAudio() {
         if (!audioCtx) {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          // Fire a silent 1-sample buffer to fully unlock audio on mobile
-          const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
-          const src = audioCtx.createBufferSource();
-          src.buffer = buf;
-          src.connect(audioCtx.destination);
-          src.start(0);
         }
-      });
-      document.addEventListener('pointerup', () => { isDown = false; });
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        src.connect(audioCtx.destination);
+        src.start(0);
+      }
+
+      document.addEventListener('touchstart', unlockAudio, { once: true });
+      document.addEventListener('pointerdown', unlockAudio, { once: true });
+
+      document.addEventListener('pointerdown', () => { isDown = true; });
+      document.addEventListener('pointerup',   () => { isDown = false; });
 
       function getCtx() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
