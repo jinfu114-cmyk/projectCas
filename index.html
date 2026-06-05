@@ -1173,12 +1173,21 @@
       let ready = false;
       let isDown = false;
 
-      window.addEventListener('load', () => {
-        setTimeout(() => { ready = true; }, 1500);
-      });
+      ready = true;  // gesture-unlock is the real gate, not a timer
 
-      document.addEventListener('pointerdown', () => { isDown = true; });
-      document.addEventListener('pointerup',   () => { isDown = false; });
+      document.addEventListener('pointerdown', () => {
+        isDown = true;
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          // Fire a silent 1-sample buffer to fully unlock audio on mobile
+          const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+          const src = audioCtx.createBufferSource();
+          src.buffer = buf;
+          src.connect(audioCtx.destination);
+          src.start(0);
+        }
+      });
+      document.addEventListener('pointerup', () => { isDown = false; });
 
       function getCtx() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
