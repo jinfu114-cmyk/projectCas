@@ -1173,30 +1173,24 @@
     ───────────────────────────── */
 
     (function() {
-      let audioCtx = null;
+      let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       let ready = true;
       let isDown = false;
 
       function unlockAudio() {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
         const src = audioCtx.createBufferSource();
         src.buffer = buf;
         src.connect(audioCtx.destination);
         src.start(0);
-
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
-        g.gain.setValueAtTime(0, audioCtx.currentTime);
+        g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
         o.connect(g);
         g.connect(audioCtx.destination);
         o.start();
-        o.stop(audioCtx.currentTime + 0.001);
+        o.stop(audioCtx.currentTime + 0.05);
       }
 
       document.addEventListener('touchstart', unlockAudio, { once: true });
@@ -1206,7 +1200,6 @@
       document.addEventListener('pointerup',   () => { isDown = false; });
 
       function getCtx() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
         return audioCtx;
       }
