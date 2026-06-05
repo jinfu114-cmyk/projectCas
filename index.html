@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="user-scalable=no, maximum-scale=1.0">
-
+  <link rel="icon" href="data:,">
   <title>♛ 𝐂𝐀𝐒𝐓𝐄𝐋𝐋 - カ ス テ ル ♛</title>
   
   <style>
@@ -1163,7 +1163,107 @@
       triggerBatchGlint();
       setInterval(triggerBatchGlint, 10000);
     }
+  
+    /* ─────────────────────────────
+       HOVER SOUND EFFECTS
+    ───────────────────────────── */
 
+    (function() {
+      let audioCtx = null;
+      let ready = false;
+      let isDown = false;
+
+      window.addEventListener('load', () => {
+        setTimeout(() => { ready = true; }, 1500);
+      });
+
+      const quackSound = new Audio('quack.mp3');
+      quackSound.volume = 0.05;
+
+      function playQuack() {
+        quackSound.currentTime = 0;
+        quackSound.play();
+      }
+
+      document.addEventListener('pointerdown', (e) => {
+        isDown = true;
+        if (!ready) return;
+        if (e.target.classList.contains('card') || e.target.closest('.pinko-item')) {
+          playQuack();
+        }
+      });
+
+      document.addEventListener('pointerup', () => { isDown = false; });
+
+      function getCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+      }
+
+      function playChime(freq) {
+        const ctx = getCtx();
+        const partials = [
+          { mult: 1,    amp: 1.0,  decay: 0.6  },
+          { mult: 2.76, amp: 0.5,  decay: 0.36 },
+          { mult: 5.4,  amp: 0.25, decay: 0.21 },
+          { mult: 8.93, amp: 0.1,  decay: 0.12 },
+        ];
+        partials.forEach(({ mult, amp, decay }) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.type = 'sine';
+          o.frequency.value = freq * mult;
+          g.gain.setValueAtTime(0.009 * amp, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + decay);
+          o.start();
+          o.stop(ctx.currentTime + decay);
+        });
+      }
+
+      function getCardIndex(cardEl) {
+        const pinkoClass = Array.from(cardEl.classList).find(c => c.startsWith('pinkoId-'));
+        if (!pinkoClass) return 0;
+        const allIds = Array.from(groupElement.children).map(child => {
+          const img = child.querySelector('img');
+          return img ? Array.from(img.classList).find(c => c.startsWith('pinkoId-')) : null;
+        });
+        const idx = allIds.indexOf(pinkoClass);
+        return idx === -1 ? 0 : idx;
+      }
+
+      function throttle(fn, ms) {
+        let last = 0;
+        return function(...args) {
+          const now = Date.now();
+          if (now - last >= ms) { last = now; fn(...args); }
+        };
+      }
+
+      const ROOT = 523.25;
+      const PENTATONIC = [1, 1.125, 1.25, 1.5, 1.667, 2, 2.25, 2.5, 3, 3.333];
+
+      function freqForIndex(index, total) {
+        const t = total <= 1 ? 0 : index / (total - 1);
+        const scaleIndex = Math.round(t * (PENTATONIC.length - 1));
+        return ROOT * PENTATONIC[scaleIndex];
+      }
+
+      const throttledChime = throttle(function(cardEl) {
+        const total = groupElement.children.length;
+        const index = getCardIndex(cardEl);
+        const freq = freqForIndex(index, total);
+        playChime(freq);
+      }, 120);
+
+      document.addEventListener('pointerover', function(e) {
+        if (!ready || isDown) return;
+        if (e.target.classList.contains('card')) {
+          throttledChime(e.target);
+        }
+      });
+    })();
   </script>
 </body>
 </html>
