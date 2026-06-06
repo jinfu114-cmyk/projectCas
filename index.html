@@ -194,7 +194,9 @@
     }
 
     .card:hover {
-      filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px #fff);
+      filter:
+        drop-shadow(0 0 2px var(--hover-color))
+        drop-shadow(0 0 6px var(--hover-color));
     }
 
     .shirt-container {
@@ -231,7 +233,9 @@
     }
 
     .pinko-item:hover img {
-      filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 3px #ffffff);
+      filter:
+        drop-shadow(0 0 1px var(--hover-color))
+        drop-shadow(0 0 3px var(--hover-color));
     }
 
 
@@ -579,6 +583,100 @@
 
     document.addEventListener('DOMContentLoaded', init);
 
+    const glowCache = new Map();
+
+    function setAutoGlowColor(img) {
+      const src = img.src;
+
+      // ✅ 1. CACHE CHECK (instant return)
+      if (glowCache.has(src)) {
+        img.style.setProperty('--hover-color', glowCache.get(src));
+        return;
+      }
+
+      const temp = new Image();
+      temp.crossOrigin = "anonymous";
+
+      temp.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // ✅ 2. DOWNSCALE (major performance boost)
+        const scale = 0.25;
+        canvas.width = temp.width * scale;
+        canvas.height = temp.height * scale;
+
+        ctx.drawImage(temp, 0, 0, canvas.width, canvas.height);
+
+        const h = Math.floor(canvas.height * 0.6);
+        const pixels = ctx.getImageData(0, 0, canvas.width, h).data;
+
+        const colorCounts = new Map();
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          const a = pixels[i + 3];
+          if (a < 80) continue;
+
+          let r = pixels[i];
+          let g = pixels[i + 1];
+          let b = pixels[i + 2];
+
+          // mild saturation push (kept but cleaner)
+          const max = Math.max(r, g, b);
+          if (max === r) r *= 1.3;
+          if (max === g) g *= 1.3;
+          if (max === b) b *= 1.3;
+
+          r = Math.min(255, r);
+          g = Math.min(255, g);
+          b = Math.min(255, b);
+
+          const key =
+            `${Math.round(r / 24) * 24},` +
+            `${Math.round(g / 24) * 24},` +
+            `${Math.round(b / 24) * 24}`;
+
+          colorCounts.set(key, (colorCounts.get(key) || 0) + 1);
+        }
+
+        let best = [255, 255, 255];
+        let maxCount = 0;
+
+        for (const [key, count] of colorCounts.entries()) {
+          if (count > maxCount) {
+            maxCount = count;
+            best = key.split(',').map(Number);
+          }
+        }
+
+        let [r, g, b] = best;
+
+        // 🔥 neon boost (final polish)
+        const boost = 2;
+        r *= boost;
+        g *= boost;
+        b *= boost;
+
+        const avg = (r + g + b) / 3;
+        r += (255 - avg) * 0.10;
+        g += (255 - avg) * 0.10;
+        b += (255 - avg) * 0.10;
+
+        r = Math.min(255, r) | 0;
+        g = Math.min(255, g) | 0;
+        b = Math.min(255, b) | 0;
+
+        const glow = `rgb(${r},${g},${b})`;
+
+        // ✅ 3. STORE CACHE
+        glowCache.set(src, glow);
+
+        img.style.setProperty('--hover-color', glow);
+      };
+
+      temp.src = src;
+    }
+
     function init() {
       initCarousel();
       preloadPinkos();
@@ -693,6 +791,8 @@
       const pinkoDexList = saved ? JSON.parse(saved) : generatePinkoDex(10);
       renderCards(pinkoDexList);
       cloneGroup();
+
+      document.querySelectorAll('.card').forEach(setAutoGlowColor);
     }
 
     function preloadPinkos() {
@@ -955,6 +1055,7 @@
       wrapper.className = 'pinko-item';
       wrapper.dataset.sourceIndex = sourceImg.dataset.sourceIndex;
       wrapper.appendChild(finalImg);
+      setAutoGlowColor(finalImg);
       return wrapper;
     }
 
