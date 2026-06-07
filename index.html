@@ -31,6 +31,7 @@
     }
 
     body {
+      touch-action: none;  /* add this */
       background-image: url('castellbg1.png');
       background-position: center;
       background-size: 300px;
@@ -849,6 +850,8 @@
       document.addEventListener('pointerdown', handleMouseDown, { passive: false });
       document.addEventListener('pointermove', handleMouseMove, { passive: false });
       document.addEventListener('pointerup',   handleMouseUp,   { passive: false });
+
+      document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
     }
 
     function handleMouseDown(event) {
