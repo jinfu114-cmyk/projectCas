@@ -1295,14 +1295,13 @@
       }
 
       document.addEventListener('touchstart', unlockAudio, { once: true });
-      document.addEventListener('touchend',    unlockAudio, { once: true });
       document.addEventListener('pointerdown', unlockAudio, { once: true });
 
       document.addEventListener('pointerdown', () => { isDown = true; });
       document.addEventListener('pointerup',   () => { isDown = false; });
 
       function getCtx() {
-        if (audioCtx.state !== 'running') audioCtx.resume();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         return audioCtx;
       }
 
