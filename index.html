@@ -1090,12 +1090,28 @@
     }
 
     function toggleCardVisibility(index, hide) {
-      [groupElement, document.getElementById('group-clone')].forEach(group => {
-        if (!group) return;
-        const card = group.children[index];
-        if (!card) return;
-        card.classList.toggle('hidden', hide);
-      });
+      const origCard = groupElement.children[index];
+      if (!origCard) return;
+      const img = origCard.querySelector('img');
+      const pinkoIdClass = img
+        ? Array.from(img.classList).find(c => c.startsWith('pinkoId-'))
+        : null;
+
+      if (pinkoIdClass) {
+        [groupElement, document.getElementById('group-clone')].forEach(group => {
+          if (!group) return;
+          group.querySelectorAll('.' + pinkoIdClass).forEach(card => {
+            card.closest('.card-main')?.classList.toggle('hidden', hide);
+          });
+        });
+      } else {
+        // fallback
+        [groupElement, document.getElementById('group-clone')].forEach(group => {
+          if (!group) return;
+          const card = group.children[index];
+          if (card) card.classList.toggle('hidden', hide);
+        });
+      }
     }
 
     function cleanupDrag() {
