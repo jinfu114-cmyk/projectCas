@@ -900,16 +900,12 @@
 
       dragImg = card.cloneNode(true);
       dragImg.dataset.sourceIndex = index;
-      dragImg.style.opacity = '0';
       toggleCardVisibility(index, true);
       document.body.appendChild(dragImg);
       Object.assign(dragImg.style, {
         position: 'absolute', pointerEvents: 'none', zIndex: '1000', imageRendering: 'auto',
       });
       moveAt(event.pageX, event.pageY);
-      requestAnimationFrame(() => {
-        dragImg.style.opacity = '';
-      });
     }
 
     function handleMouseMove(event) {
